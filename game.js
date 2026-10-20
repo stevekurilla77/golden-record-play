@@ -86,11 +86,11 @@ function brass(f,t,d,v,D){tone(f,t,d,'sawtooth',v,null,D);tone(f*1.006,t,d,'sawt
 function startMusic(kind,v=0){if(kind==='game')kind=S==='moon'?'moon':'space';if(kind==='boss'&&S==='moon')kind='moonboss';wantTheme=[kind,v];if(!AC)return;if(music&&curTheme===kind+v)return;stopMusic();curTheme=kind+v;wantTheme=[kind,v];
  const th=THEMES[kind]||THEMES.space,sc=SC[th.sc],base=th.root+(th.style==='hero'&&!th.cine?[0,2,5,3][v%4]:0),spd=60/(th.bpm+(th.style==='hero'?v*4:0))/4;let step=0,next=AC.currentTime+.06;
  const deg=d=>sc[((d%7)+7)%7]+12*Math.floor(d/7),lead=v&&th.alt?th.alt[(v-1)%th.alt.length]:th.lead;
- music=setInterval(()=>{if(!AC||AC.state!=='running')return;while(next<AC.currentTime+.25){const D=musG,lvl=th.cine?MUS.intensity:3,t=next;
+ music=setInterval(()=>{if(!AC||AC.state!=='running')return;while(next<AC.currentTime+.25){const D=musG,lvl=th.cine?Math.max(1,MUS.intensity):3,t=next;
   const bar=Math.floor(step/16),s16=step%16,sec=Math.floor(bar/8),c=th.prog[bar%th.prog.length],root=base+(th.mod?th.mod[sec%th.mod.length]:0),L=lead[step%lead.length],b8=bar%8;
   if(th.style==='hero'){
    // pad + big chord stabs
-   if(s16===0)[0,2,4].forEach(k=>tone(mf(root+12+deg(c+k)),t,spd*16,'triangle',.018,null,D));
+   if(s16===0)[0,2,4].forEach(k=>tone(mf(root+12+deg(c+k)),t,spd*16,'triangle',.03,null,D));
    if(lvl>=2&&(s16===0||s16===6||(th.boss&&s16===10)||(b8===7&&s16===12)))[0,2,4,7].forEach(k=>tone(mf(root+12+deg(c+k)),t,spd*1.6,'sawtooth',.022,null,D));
    // punchy bass ostinato on 8ths
    if(lvl>=1&&s16%2===0){const o=[0,0,12,0,7,0,12,10][(s16>>1)];tone(mf(root-12+deg(c)+o),t,spd*1.5,'square',.05,null,D);tone(mf(root-24+deg(c)),t,spd*1.6,'triangle',.12,null,D);}
