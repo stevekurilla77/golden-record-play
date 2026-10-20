@@ -170,7 +170,7 @@ function pauseMenu(){const P=PAUSEM;P.t+=DT;g.fillStyle='rgba(6,4,20,.8)';g.fill
  panel(bx-10,40,bw+20,282,'#45d6ff');sfxText('PAUSED',W/2,62,24,P.t,-.04);
  const rows=P.how?[]:P.conf?[['QUIT TO TITLE?',0],['YES, QUIT','yes'],['NO, KEEP PLAYING','no']]:[['RESUME ▶','res'],['MUSIC '+vlab(VOL.mus),'mus'],['SOUND FX '+vlab(VOL.sfx),'sfx'],[(VOL.mus||VOL.sfx)?'MUTE ALL':'UNMUTE','mute'],['HOW TO PLAY','how'],['QUIT TO TITLE','quit']];
  rows.forEach((r,i)=>{const y=96+i*36;if(r[1]){panel(bx,y-14,bw,28,r[1]==='res'||r[1]==='no'?'#5fe36a':r[1]==='quit'||r[1]==='yes'?'#ff4f7b':'#3a4180');}txt(r[0],W/2,y,11,'#ffffff');});
- if(P.how){const L=S==='space'?['Left side of the screen steers Pale Blue.','FIRE: hold the lower right to blast.','Tokens: S shield, F force field, R rapid, W spread.','Beat the last boss to win its Heart Crystal shard.']:['Left side walks. Up arrow climbs.','JUMP: lower right. Hold for a higher jump.','FIRE: next to JUMP. Blast the blobs.','Bosses guard Heart Crystal shards. 5 gems = 1-up!'];
+ if(P.how){const L=S==='space'?['Left side of the screen steers Pale Blue.','FIRE: hold the lower right to blast.','Tokens: S shield, F force field, R rapid, W spread.','Beat the last boss to win its Crystal Key.']:['Left side walks. Up arrow climbs.','JUMP: lower right. Hold for a higher jump.','FIRE: next to JUMP. Blast the blobs.','Bosses guard Crystal Keys. 5 gems = 1-up!'];
   L.forEach((l,i)=>txt(l,W/2,104+i*30,9.5,'#ffffff'));panel(bx,252,bw,28,'#5fe36a');txt('BACK',W/2,266,11,'#ffffff');}
  {const tx=546;panel(tx-44,40,88,282,'#b04aff');txt('CRYSTAL',tx,54,8,'#e8d0ff');txt('TRACKER',tx,66,8,'#e8d0ff');for(let i=1;i<=6;i++){const y=88+(i-1)*36,on=!!SHARDS[i];g.fillStyle='rgba(10,12,40,.85)';g.strokeStyle=on?SHCOL[i]:'#4a4a7a';g.lineWidth=2;g.beginPath();g.arc(tx-14,y,13,0,TAU);g.fill();g.stroke();if(on)heartShard(tx-14,y,.42,SHCOL[i],.5);else txt('?',tx-14,y+1,10,'#6a6a9a');txt(i<=4?'M'+i:'??',tx+18,y,8,on?'#ffe066':'#6a6a9a');}txt(Object.keys(SHARDS).length+' FOUND',tx,306,8,'#ffffff');}
  const tp=tapped();if(K.Escape&&!P.esc){P.esc=1;}if(!K.Escape&&P.esc===1){P.esc=0;closePause();return;}
@@ -228,7 +228,7 @@ function gemShard(x,y,i,old,sc=1){g.save();g.translate(x,y);g.scale(sc,sc);g.rot
  g.fillStyle='rgba(255,255,255,.75)';g.beginPath();g.moveTo(0,-9);g.lineTo(-4.5,-2.5);g.lineTo(-1,-1);g.closePath();g.fill();g.restore();}
 
 // ===== Heart Crystal shards: one per mission, guarded by its boss. Big pickup moment + Crystal Tracker (pause menu)
-const SHARDINFO={1:['ACE KREEL\'S SHARD','Kreel drops it as he flees!'],2:['THE MOON SHARD','Big Blorp was sitting on it!'],3:['THE MARS GATE SHARD','Krool dropped it in his escape!'],4:['THE MARS SHARD','The Dust Whale coughs it up!']};
+const SHARDINFO={1:['ACE KREEL\'S CRYSTAL KEY','Kreel drops it as he flees!'],2:['THE MOON CRYSTAL KEY','Big Blorp was sitting on it!'],3:['THE MARS GATE CRYSTAL KEY','Krool dropped it in his escape!'],4:['THE MARS CRYSTAL KEY','The Dust Whale coughs it up!']};
 const SHCOL={1:'#7ae8ff',2:'#e8f0ff',3:'#ff9a3a',4:'#ff5a3a'};
 let SHM=null;
 function shardMoment(l,cb){if(SHM)return;SHM={l,t:0,cb,ph:0};sfx('stinger');try{fanfare();}catch(e){}}
@@ -247,11 +247,11 @@ function shardCut(){const S2=SHM,t=S2.t+=DT,l=S2.l,inf=SHARDINFO[l];
   for(let i=0;i<4;i++)captain(150+i*112,300,CAPS[i],{sc:1.5,t:T+i,shoot:0,face:i<2?1:-1});
   for(let k=0;k<10;k++){const a=k/10*TAU+T;g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=2;g.beginPath();g.moveTo(W/2+Math.cos(a)*50,118+Math.sin(a)*50);g.lineTo(W/2+Math.cos(a)*64,118+Math.sin(a)*64);g.stroke();}
   heartShard(W/2,118,1.4+Math.sin(T*4)*.05,SHCOL[l],1);g.globalAlpha=.15;g.fillStyle=halftone();g.fillRect(22,42,W-44,H-82);g.globalAlpha=1;g.restore();
-  caption(inf[1],30,50,240);sfxText('SHARD RECOVERED!',W/2-70,22,18,t,-.04);txt(inf[0],W/2,H-50,12,'#ffe066');txt('POWER: '+UPNAME[l][0]+' · '+UPNAME[l][1],W/2,H-24,8,'#ffffff');
+  caption(inf[1],30,50,240);sfxText('CRYSTAL KEY RECOVERED!',W/2-70,22,18,t,-.04);txt(inf[0],W/2,H-50,12,'#ffe066');txt('POWER: '+UPNAME[l][0]+' · '+UPNAME[l][1],W/2,H-24,8,'#ffffff');
   if(cutAdv(t,AUTO&&t>1.8)){S2.ph=2;S2.t=0;}return;}
  // shard flies into the Crystal Tracker
  const k=clamp(t/1.1,0,1),e=1-Math.pow(1-k,3),tx=W/2-150+(l-1)*30*1.25,ty=88;panel(W/2-190,58,380,60,'#b04aff');txt('CRYSTAL TRACKER',W/2,70,10,'#e8d0ff');trackerSlots(W/2-150,96,30,l,k);
- heartShard(W/2+(tx-W/2)*e,200+(ty+8-200)*e,1.4-e*1.0,SHCOL[l],1);if(k>=1)txt(Object.keys(SHARDS).length+' SHARDS FOUND · THE HEART CRYSTAL STIRS',W/2,150,10,'#ffe066');
+ heartShard(W/2+(tx-W/2)*e,200+(ty+8-200)*e,1.4-e*1.0,SHCOL[l],1);if(k>=1)txt(Object.keys(SHARDS).length+' CRYSTAL KEYS FOUND · THE HEART CRYSTAL GLOWS',W/2,150,10,'#ffe066');
  if(t>(AUTO?1.4:2.4)){const cb=S2.cb;SHM=null;cb&&cb();}}
 function crystalCut(){const t=CRY.t+=DT,e=1-Math.pow(1-clamp(t/.4,0,1),3);g.fillStyle='rgba(6,4,20,.82)';g.fillRect(0,0,W,H);
  g.save();g.translate(0,(1-e)*H);g.fillStyle=OL;g.fillRect(110,50,420,250);g.save();g.beginPath();g.rect(116,56,408,238);g.clip();g.fillStyle=lg(g,0,56,0,294,['#3a1a6a','#7a3ae8','#ff7ae0']);g.fillRect(116,56,408,238);speedLines(320,160,'rgba(255,255,255,.25)');
@@ -351,8 +351,8 @@ function M3CUTART(type){if(type==='grubb')grubbArt(174,175,1.2,false);else if(ty
 // refuel comic scenes after each freed station (paused, tap to advance with the input delay)
 const REFUEL=[
  [['cap','FUEL DEPOT ALPHA: FREED!','Tanks filling up! Pale Blue lives to fly another day.'],['hayes','Hayes checks in.','Nice work. Grubb was hauling fuel for Malakar\'s fleet.'],['cap','Refueled.','Every station we free slows the Vorr down. On to the next!']],
- [['cap','RING STATION BETA: FREED!','Two sisters down, one station closer to Mars.'],['hayes','Hayes checks in.','Those twins were tracking Voyager\'s signal. The Vorr are getting close to it.'],['mal','Aboard the Vorr flagship...','Two stations lost? Then FLY FASTER! Those shards must be MINE!']],
- [['cap','MARS GATE: OPEN!','Krool\'s pod spins off. He dropped the third shard!'],['hayes','Hayes checks in.','Krool dropped his star charts. Voyager\'s trail runs right past Mars.'],['cap','Full tanks.','Then that\'s where we\'re going. Hang on, crew!']]];
+ [['cap','RING STATION BETA: FREED!','Two sisters down, one station closer to Mars.'],['hayes','Hayes checks in.','Those twins were tracking Voyager\'s signal. The Vorr are getting close to it.'],['mal','Aboard the Vorr flagship...','Two stations lost? Then FLY FASTER! Those Crystal Keys must be MINE!']],
+ [['cap','MARS GATE: OPEN!','Krool\'s pod spins off. He dropped the third Crystal Key!'],['hayes','Hayes checks in.','Krool dropped his star charts. Voyager\'s trail runs right past Mars.'],['cap','Full tanks.','Then that\'s where we\'re going. Hang on, crew!']]];
 function stationArt(i,t){g.fillStyle=lg(g,0,50,0,290,['#140c34','#2a1a5a']);g.fillRect(30,50,288,238);starfield(T*4);const cx=150,cy=170;
  circ(cx,cy,52,OL);g.fillStyle=ballG(g,cx,cy,49,49,['#5fe36a','#ff7ae0','#ff9a3a'][i]);g.beginPath();g.arc(cx,cy,49,0,TAU);g.fill();g.strokeStyle=OL;g.lineWidth=5;g.beginPath();g.ellipse(cx,cy,78,20,-.2,0,TAU);g.stroke();g.strokeStyle='#ffe066';g.lineWidth=2.5;g.stroke();
  for(let k=0;k<6;k++){const u=((t*.8+k/6)%1),bx=cx+40+u*90,by=cy+10-u*30;circ(bx,by,4.5,OL);circ(bx,by,3.4,'#ffe066');}ship(270,140,T,.85);}
@@ -565,7 +565,7 @@ function marsify(m){const G0=GROUND;
  m.tips=[[40,'Mars, Captain. The colony is built right into that mountain. Something down there has gone very quiet.'],[300,'Same moves as the Moon: JUMP to hop, hold it to go higher.'],
   [560,'Those are our colony robots, with Vorr crystals stuck on them! Zap them to set them free. Don\'t worry, they won\'t break.'],[1290,'Zibbits again. Malakar sent his flyers ahead.'],
   [1700,'Checkpoint beacon. The colony built these too.'],[1900,'A sealed door. Free a robot nearby and it might open a shortcut for you.'],[2650,'Moving platforms. Ride them across the canyon.'],
-  [3760,'The colony entrance. Keep your eyes open for gem pieces. And for that shard.'],[5300,'The colony gate. The leader robot should be just inside.'],
+  [3760,'The colony entrance. Keep your eyes open for gem pieces. And for that Crystal Key.'],[5300,'The colony gate. The leader robot should be just inside.'],
   [6100,'Squid gunners! The Vorr really did move in.'],[7060,'The pump room. Bone dry. Somebody took all the water.'],[7880,'Drop shaft. Float down slowly.'],
   [9230,'Deep tunnels. Stay near the lamps. Something big is swimming through the rock...'],[11300,'Hear that rumble? It\'s getting closer.'],[12680,'The water cavern. Get ready, Captain!']];}
 function freeBot(f){const m=M;f.freed=1;f.hp=0;f.vx=0;f.mode='walk';stats.kills++;score+=150;boomAt(m.booms,f.x,f.y-24,10,'#7ae8ff');sfx('power');
@@ -593,8 +593,8 @@ function leaderBot(x,y,t,trapped){g.save();g.translate(x,y);
  g.restore();}
 const LEADER=[['Inside the colony gate...','Who\'s there? Oh! Earthlings! Thank you! I am PIP-7, the colony leader. The Vorr turned my robots against us.'],
  ['PIP-7 explains.','We came to Mars to find water and grow gardens. Then a giant DUST WHALE came and gulped ALL our water tanks!'],
- ['PIP-7 explains.','It swallowed a glowing crystal shard, too. It sleeps in the water cavern, deep in the tunnels. Please save our gardens!'],
- ['cap','A crystal shard? Then that\'s where we\'re going. Hang tight, PIP-7.']];
+ ['PIP-7 explains.','It swallowed a glowing Crystal Key, too. It sleeps in the water cavern, deep in the tunnels. Please save our gardens!'],
+ ['cap','A Crystal Key? Then that\'s where we\'re going. Hang tight, PIP-7.']];
 function leaderCut(m){const c=m.cut,t=c.t,L=LEADER[c.b];g.fillStyle='rgba(6,4,20,.82)';g.fillRect(0,0,W,H);
  g.fillStyle=OL;g.fillRect(24,44,300,250);g.save();g.beginPath();g.rect(30,50,288,238);g.clip();g.fillStyle=lg(g,0,50,0,288,['#3a1a2a','#7a3020']);g.fillRect(30,50,288,238);
  for(let i=0;i<5;i++){g.fillStyle='#4a8a3a';g.beginPath();g.ellipse(60+i*55,280,18,10+Math.sin(i)*3,0,Math.PI,TAU);g.fill();g.fillStyle='#8a6a3a';g.fillRect(52+i*55,280,16,8);}
@@ -1475,10 +1475,10 @@ const COMIC=[
   g.fillStyle='#2a2238';g.fillRect(0,250,W,110);g.fillStyle=OL;g.fillRect(120,200,200,18);g.fillStyle='#6a5a48';g.fillRect(122,202,196,14);g.fillStyle=OL;g.fillRect(150,120,120,82);g.fillStyle='#062a10';g.fillRect(156,126,108,70);
   g.strokeStyle='#5fe36a';g.lineWidth=2;g.beginPath();for(let i=0;i<108;i++)g.lineTo(156+i,161+Math.sin(i*.3+t*8)*Math.sin(i*.05+t)*24);g.stroke();dglow(210,160,60,'#5fe36a',.3);kosmosFig(380,210,1.4,-1);},
   bub:[{s:'The Vorr... they\'re hunting for something.',x:380,y:60,w:200,tx:390,ty:150,at:1.2}],fx:{s:'BEEP! BEEP!',x:200,y:100,sz:22,at:.3}},
- {d:5.5,int:1,cap:'The Heart Crystal. Long ago it shattered, and its shards scattered across the solar system.',draw:t=>{g.fillStyle='#120c24';g.fillRect(0,0,W,H);speedLines(W/2,H/2,'rgba(122,232,255,.12)');
+ {d:5.5,int:1,cap:'The Heart Crystal. Long ago it went dark, and its Crystal Keys scattered across the solar system.',draw:t=>{g.fillStyle='#120c24';g.fillRect(0,0,W,H);speedLines(W/2,H/2,'rgba(122,232,255,.12)');
   for(const sx of[-1,1]){g.save();g.translate(W/2+sx*(40+t*6),205);g.rotate(sx*.15);g.fillStyle=OL;g.beginPath();g.ellipse(0,0,95,60,0,sx>0?-Math.PI/2:Math.PI/2,sx>0?Math.PI/2:Math.PI*1.5);g.fill();g.fillStyle=lg(g,0,-60,0,60,['#6a5a6a','#3a2e3a']);g.beginPath();g.ellipse(0,0,90,56,0,sx>0?-Math.PI/2:Math.PI/2,sx>0?Math.PI/2:Math.PI*1.5);g.fill();g.restore();}
   crystal(W/2,190,1.6+Math.sin(t*3)*.05);for(const sx of[-1,1]){g.fillStyle=OL;g.beginPath();g.ellipse(W/2+sx*170,290,48,30,sx*.4,0,TAU);g.fill();g.fillStyle='#e8b890';g.beginPath();g.ellipse(W/2+sx*170,290,44,26,sx*.4,0,TAU);g.fill();}},
-  bub:[{s:'It only wakes when every shard is back!',x:60,y:70,w:150,tx:150,ty:250,at:1.4}],fx:{s:'KRRSSHH!',x:470,y:300,sz:26,at:.2}},
+  bub:[{s:'Only all the Keys can unlock it and light it up again!',x:60,y:70,w:150,tx:150,ty:250,at:1.4}],fx:{s:'KRRSSHH!',x:470,y:300,sz:26,at:.2}},
  {d:6,int:1,cap:'The Vorr must never get it. So he hides the Heart Crystal inside the Golden Record on Voyager.',draw:t=>{g.fillStyle=lg(g,0,0,W,H,['#2a1a10','#5a3a10']);g.fillRect(0,0,W,H);speedLines(330,200,'rgba(255,210,90,.12)');
   crystal(330+Math.max(0,1-t/3)*-120,200,1.2,1-Math.min(1,t/3)*.5);bigRecord(330,200,120);g.fillStyle=OL;g.beginPath();g.ellipse(130+Math.min(t,3)*30,250,50,30,-.3,0,TAU);g.fill();g.fillStyle='#e8b890';g.beginPath();g.ellipse(130+Math.min(t,3)*30,250,46,26,-.3,0,TAU);g.fill();},
   bub:[{s:'Go far. Keep it safe.',x:430,y:70,w:180,tx:420,ty:200,at:1.8}]},
@@ -1486,16 +1486,16 @@ const COMIC=[
  {d:5,int:2,warn:1,cap:'DECADES LATER.',draw:t=>{const on=(t*4|0)%2;g.fillStyle=on?'#4a0a1a':'#2a0a14';g.fillRect(0,0,W,H);dsp(mcSpr(),0,0,1,1,0,false,.55);g.fillStyle=`rgba(255,30,60,${on?.35:.1})`;g.fillRect(0,0,W,H);
   g.fillStyle=OL;g.fillRect(170,60,300,120);g.fillStyle='#200008';g.fillRect(176,66,288,108);g.strokeStyle='#ff4f7b';g.lineWidth=2;g.beginPath();for(let i=0;i<288;i++)g.lineTo(176+i,120+Math.sin(i*.25+t*10)*30*Math.sin(i*.04));g.stroke();txt('SIGNAL 1977-K',320,80,10,'#ff4f7b');},
   bub:[{s:'The Vorr tracked Voyager\'s signal!',x:330,y:200,w:230,tx:300,ty:330,shout:1,at:.8}],fx:{s:'WHOOP! WHOOP!',x:160,y:240,sz:22,at:.1}},
- {d:5.5,int:2,cap:'Vorr warships, powered by stolen crystal, hunt for the shards.',draw:t=>{starfield(T*3);g.fillStyle=OL;g.beginPath();g.arc(120,300,160,0,TAU);g.fill();g.fillStyle=ballG(g,120,300,156,156,'#3a6aff');g.beginPath();g.arc(120,300,156,0,TAU);g.fill();
+ {d:5.5,int:2,cap:'Vorr warships, powered by stolen crystal, hunt for the Crystal Keys.',draw:t=>{starfield(T*3);g.fillStyle=OL;g.beginPath();g.arc(120,300,160,0,TAU);g.fill();g.fillStyle=ballG(g,120,300,156,156,'#3a6aff');g.beginPath();g.arc(120,300,156,0,TAU);g.fill();
   dsp(carrierSpr(),470-t*10,120,1.1);for(let i=0;i<9;i++){dglow(300+i*36-t*30+22,200+Math.sin(i*1.7)*60,8,'#45d6ff',.6);dsp(vorrSpr(),300+i*36-t*30,200+Math.sin(i*1.7)*60,1.2);}},fx:{s:'VRRRMMM',x:450,y:290,sz:24,at:.6,rot:-.05,c1:'#e0b0ff',c2:'#8a2ad0'}},
  {d:6,int:2,sting:1,cap:'VORR KING MALAKAR',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#1a0420','#3a0a40']);g.fillRect(0,0,W,H);speedLines(320,170,'rgba(255,80,160,.12)');vorrKing(320,190+Math.sin(t*2)*3,1.15+t*.02);
-  g.fillStyle='rgba(255,40,80,.06)';for(let y=0;y<H;y+=4)g.fillRect(0,y+(T*40%4),W,1);},bub:[{s:'Every shard will be mine. Then the Heart Crystal obeys ME!',x:380,y:200,w:220,tx:360,ty:150,at:1}]},
+  g.fillStyle='rgba(255,40,80,.06)';for(let y=0;y<H;y+=4)g.fillRect(0,y+(T*40%4),W,1);},bub:[{s:'Every Crystal Key will be mine. Then the Heart Crystal obeys ME!',x:380,y:200,w:220,tx:360,ty:150,at:1}]},
  {d:5.5,int:3,cap:'ACE KREEL: the Vorr\'s deadliest pilot.',draw:t=>{g.fillStyle='#0a0618';g.fillRect(0,0,W,H);speedLines(220,170,'rgba(255,79,123,.15)');g.fillStyle=OL;g.beginPath();g.ellipse(220,190,190,170,0,0,TAU);g.lineWidth=14;g.strokeStyle='#3a2a5a';g.stroke();kreel(220,190,1.5);
   g.fillStyle=OL;g.fillRect(420,250,190,34);g.fillStyle='#ff4f7b';g.fillRect(424,254,182,26);txt('ACE KREEL',515,267,14,'#ffffff');},bub:[{s:'Kreel flies point. Nothing gets past me.',x:400,y:70,w:200,tx:300,ty:150,at:1}],fx:{s:'SKREEE!',x:520,y:200,sz:20,at:2.2,rot:.12}},
  {d:5,int:3,cap:'The Moon outpost goes dark as blob minions overrun it.',draw:t=>{starfield(0);earth(540,60,30);g.fillStyle=lg(g,0,240,0,H,['#c8ccd8','#7a7e90']);g.fillRect(0,240,W,H-240);
   for(const[dx,r]of[[160,80],[380,56]]){g.fillStyle=OL;g.beginPath();g.ellipse(dx,244,r+3,r*.8+3,0,Math.PI,TAU);g.fill();g.fillStyle=(t*3|0)%2&&t<2.5?'#bfe8ff':'#2a3050';g.beginPath();g.ellipse(dx,244,r,r*.8,0,Math.PI,TAU);g.fill();}
   for(let i=0;i<8;i++)blob(60+i*75,262+(i%2)*14,T+i,{r:18+(i%3)*4,face:i%2?1:-1});},fx:{s:'BLORP!',x:480,y:150,sz:30,at:.5,c1:'#a0ff90',c2:'#2a9a3a'}},
- {d:5,int:3,cap:'Mission Control.',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#1c2458','#0c0f2a']);g.fillRect(0,0,W,H);speedLines(200,200,'rgba(255,197,61,.1)');dsp(portrait('hayes'),200,330,7);},bub:[{s:'Four captains. Find the shards before Malakar does. Each Vorr boss guards one.',x:360,y:90,w:240,tx:300,ty:180,at:.8}]},
+ {d:5,int:3,cap:'Mission Control.',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#1c2458','#0c0f2a']);g.fillRect(0,0,W,H);speedLines(200,200,'rgba(255,197,61,.1)');dsp(portrait('hayes'),200,330,7);},bub:[{s:'Four captains. Find the Crystal Keys before Malakar does. Each Vorr boss guards one.',x:360,y:90,w:240,tx:300,ty:180,at:.8}]},
  ...[0,1,2,3].map(i=>({d:3.4,int:3,cap:'',capI:i,draw:t=>{const cols=['#2f7bff','#ff4f7b','#3fae5a','#8a5cff'];g.fillStyle=cols[i];g.fillRect(0,0,W,H);speedLines(200,180,'rgba(255,255,255,.22)');
   const sx=Math.max(0,1-t/.35)*-300;capCard(i,60+sx,30,240,300);g.fillStyle=OL;g.fillRect(330,110,270,46);g.fillStyle='#ffe066';g.fillRect(333,113,264,40);txt(CAPS[i].name,465,133,17,'#ffffff');cText(CAPS[i].bio,340,170,11,'#ffffff',250,16);txt('CAPTAIN '+(i+1)+' OF 4',465,90,9,'#ffffff');}})),
  {d:4.5,int:3,sting:1,cap:'The crew of four stands ready. Choose who flies Pale Blue.',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#ff9a5a','#5a4a9a','#1a1a4a']);g.fillRect(0,0,W,H);g.fillStyle='#2a2a3a';g.fillRect(0,270,W,90);g.fillStyle=OL;g.fillRect(420,110,26,160);g.strokeStyle='#d04020';g.lineWidth=2;g.strokeRect(422,112,22,156);
@@ -1513,13 +1513,13 @@ const MOONWIN=[
   bub:[{s:'You win THIS time! Big Blorp go tell King Malakar!',x:330,y:70,w:240,tx:470,ty:230,at:.6,shout:1}],fx:{s:'SCRAM!',x:560,y:200,sz:26,at:.3}},
  {d:5,int:3,cap:'Something drops from the fleeing pilot.',draw:t=>{starfield(0);g.fillStyle=lg(g,0,240,0,H,['#c8ccd8','#7a7e90']);g.fillRect(0,240,W,H);dglow(320,230,90,'#ff7ae0',.5+.2*Math.sin(T*4));gemShard(320,230,0,false,4);
    captain(150,330,CAPS[cap],{sc:1.6,t:T});},
-  bub:[{s:'Our second shard of the Heart Crystal! Feel that? It\'s waking up!',x:360,y:70,w:230,tx:200,ty:200,at:.6}],fx:{s:'SHIMMER!',x:470,y:290,sz:20,at:.2,c1:'#ffd6ff',c2:'#7a3ae8'}},
- {d:5.5,int:3,img:'c07',cap:'Far away, aboard the Vorr flagship...',bub:[{s:'Two shards gone? No matter. I will take the rest, and then I take Voyager!',x:350,y:180,w:250,tx:330,ty:150,at:.6}]},
- {d:5.5,int:3,img:'c10',cap:'Mission Control, Earth.',bub:[{s:'Great work, Captain! Two shards safe. Malakar will chase you for them, so keep moving.',x:330,y:70,w:270,tx:300,ty:180,at:.4}]},
+  bub:[{s:'Our second Crystal Key! Feel that? The Heart Crystal\'s waking up!',x:360,y:70,w:230,tx:200,ty:200,at:.6}],fx:{s:'SHIMMER!',x:470,y:290,sz:20,at:.2,c1:'#ffd6ff',c2:'#7a3ae8'}},
+ {d:5.5,int:3,img:'c07',cap:'Far away, aboard the Vorr flagship...',bub:[{s:'Two Crystal Keys gone? No matter. I will take the rest, and then I take Voyager!',x:350,y:180,w:250,tx:330,ty:150,at:.6}]},
+ {d:5.5,int:3,img:'c10',cap:'Mission Control, Earth.',bub:[{s:'Great work, Captain! Two Crystal Keys safe. Malakar will chase you for them, so keep moving.',x:330,y:70,w:270,tx:300,ty:180,at:.4}]},
  {d:4.5,int:3,sting:1,cap:'The race to Voyager continues.',draw:t=>{starfield(T*30);moonBall(90,290,60);marsBall(520,120,46);speedLines(320,180,'rgba(255,197,61,.18)');ship(220+t*30,200-t*10,T,1.1);},
   fx:{s:'NEXT STOP: MARS!',x:330,y:300,sz:28,at:.5,rot:-.08}}];
 const MARSGO=[
- {d:5,int:3,cap:'Leaving the Moon with two shards aboard.',draw:t=>{starfield(T*12);moonBall(160,250,110);ship(380+t*20,130,T,1.1);},bub:[{s:'Two shards safe. Fuel gauge... uh oh. That needle is nearly on empty.',x:330,y:220,w:270,tx:400,ty:160,at:.5}]},
+ {d:5,int:3,cap:'Leaving the Moon with two Crystal Keys aboard.',draw:t=>{starfield(T*12);moonBall(160,250,110);ship(380+t*20,130,T,1.1);},bub:[{s:'Two Keys safe. Fuel gauge... uh oh. That needle is nearly on empty.',x:330,y:220,w:270,tx:400,ty:160,at:.5}]},
  {d:5,int:3,cap:'Meanwhile, a Zibbit taxi zooms ahead...',draw:t=>{starfield(T*30);speedLines(320,180,'rgba(255,255,255,.15)');g.save();g.translate(380,190);g.scale(2.4,2.4);g.translate(-380,-190);DRAWK.taxi({x:380,y:190,age:T,hit:0});g.restore();g.save();g.translate(380,150);blob(0,0,T,{r:16,face:-1,scared:1,col:'#4fd65c'});g.restore();},bub:[{s:'Faster, taxi! Big Blorp must warn the fuel stations! Earthlings coming!',x:40,y:60,w:260,tx:350,ty:150,at:.4}],fx:{s:'VROOOM!',x:520,y:290,sz:24,at:.3}},
  {d:5,int:3,img:'c10',cap:'Mission Control, Earth.',bub:[{s:'Three Vorr-held fuel stations between you and Mars. Free them, fill up, and go!',x:330,y:70,w:270,tx:300,ty:180,at:.4}]}];
 const MARSLAND=[
@@ -1530,8 +1530,8 @@ const MARSWIN=[
  {d:4.5,int:3,cap:'Meanwhile, behind a rock...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#3a1a10','#7a3020']);g.fillRect(0,0,W,H);g.save();g.translate(220+t*60,250);g.scale(1.8,1.8);blob(0,0,T*2,{r:24,face:1,scared:1,col:'#4fd65c'});dsp(domeSpr(),0,0);g.restore();},bub:[{s:'My whale! My water! Big Blorp is NOT having a good week. Run away!',x:330,y:60,w:260,tx:300,ty:200,at:.4}],fx:{s:'SCRAM!',x:520,y:300,sz:26,at:.3}},
  {d:5,int:3,cap:'The Dust Whale lets go...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#3a1a10','#1a0a08']);g.fillRect(0,0,W,H);for(let i=0;i<40;i++){const u=((t*.6+i/40)%1);circ(100+i*12+Math.sin(i)*20,300-u*260,4+i%3,'#7ae8ff');}dustWhale(320,220,.8,T,{});},bub:[{s:'Hic! Okay okay! Take your water back. Glub.',x:380,y:60,w:220,tx:360,ty:170,at:.5}],fx:{s:'SPLOOOSH!',x:180,y:80,sz:30,at:.2}},
  {d:5.5,int:3,cap:'The colony gardens drink it up.',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#ff9a6a','#c0582e']);g.fillRect(0,0,W,H);for(let i=0;i<9;i++){const x=50+i*68,gr=clamp(t*1.4-i*.1,0,1);g.fillStyle='#4a8a3a';g.beginPath();g.ellipse(x,330-gr*20,22*gr+4,30*gr+4,0,Math.PI,TAU);g.fill();if(gr>.6){circ(x,300-gr*30,7,OL);circ(x,300-gr*30,5.5,['#ff7ae0','#ffe066','#7ae8ff'][i%3]);}}leaderBot(320,310,T,false);colonyBot(200,320,T,1,{freed:1});colonyBot(450,320,T+1,-1,{freed:1});},bub:[{s:'Our gardens! They\'re blooming! Thank you, Captain!',x:360,y:60,w:240,tx:330,ty:200,at:.5}],fx:{s:'BLOOM!',x:150,y:80,sz:28,at:.4}},
- {d:5.5,int:3,cap:'The Mars shard!',draw:t=>{starfield(T*4);dglow(320,180,80+Math.sin(T*3)*8,'#b04aff',.6);g.fillStyle=OL;g.beginPath();g.moveTo(320,100);g.lineTo(360,180);g.lineTo(320,260);g.lineTo(280,180);g.closePath();g.fill();g.fillStyle=lg(g,0,100,0,260,['#f0c0ff','#b04aff','#5a1a8a']);g.beginPath();g.moveTo(320,108);g.lineTo(352,180);g.lineTo(320,252);g.lineTo(288,180);g.closePath();g.fill();},bub:[{s:'That makes four shards! The Heart Crystal is waking up. Voyager, here we come!',x:30,y:200,w:240,tx:280,ty:180,at:.5}]},
- {d:5.5,int:3,img:'c07',cap:'On the Vorr flagship...',bub:[{s:'FOUR shards?! Fine. Collect them all, Earthlings. I will take them at Voyager!',x:340,y:170,w:260,tx:330,ty:150,at:.6}]},
+ {d:5.5,int:3,cap:'The Mars Crystal Key!',draw:t=>{starfield(T*4);dglow(320,180,80+Math.sin(T*3)*8,'#b04aff',.6);g.fillStyle=OL;g.beginPath();g.moveTo(320,100);g.lineTo(360,180);g.lineTo(320,260);g.lineTo(280,180);g.closePath();g.fill();g.fillStyle=lg(g,0,100,0,260,['#f0c0ff','#b04aff','#5a1a8a']);g.beginPath();g.moveTo(320,108);g.lineTo(352,180);g.lineTo(320,252);g.lineTo(288,180);g.closePath();g.fill();},bub:[{s:'That makes four Crystal Keys! The Heart Crystal is starting to glow. Voyager, here we come!',x:30,y:200,w:240,tx:280,ty:180,at:.5}]},
+ {d:5.5,int:3,img:'c07',cap:'On the Vorr flagship...',bub:[{s:'FOUR Crystal Keys?! Fine. Collect them all, Earthlings. I will take them at Voyager!',x:340,y:170,w:260,tx:330,ty:150,at:.6}]},
  {d:5.5,int:3,cap:'Then, a crackling signal...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#0a0a20','#1a1040']);g.fillRect(0,0,W,H);starfield(T*4);moonBall(470,120,46);for(let k=0;k<4;k++){const r=((t*.8+k/4)%1)*90;g.strokeStyle=`rgba(255,224,102,${1-r/90})`;g.lineWidth=3;g.beginPath();g.arc(470,120,46+r,0,TAU);g.stroke();}ship(160,230,T,1);},bub:[{s:'...HELP... trapped... Vorr... moon of Mars... WOOF... I mean, over!',x:40,y:50,w:260,tx:420,ty:130,at:.5}],fx:{s:'SOS!',x:470,y:240,sz:28,at:.3}},
  {d:4.5,int:3,cap:'To be continued...',draw:t=>{starfield(T*14);moonBall(420,200,90);ship(220,160+Math.sin(T*2)*6,T,1.2);},bub:[{s:'Did that signal just... bark?',x:40,y:230,w:220,tx:200,ty:180,at:.5}],fx:{s:'NEXT: THE DISTRESS SIGNAL!',x:320,y:70,sz:24,at:.4,rot:-.05}}];
 const MARSARR=[
@@ -1569,10 +1569,10 @@ const VSTEP=[1,.5,0],vlab=v=>v>=1?'100%':v>0?'50%':'OFF';
 function audioBtns(){panel(W-232,4,110,24,'#45d6ff');txt('MUSIC '+vlab(VOL.mus),W-177,16,9,'#ffffff');panel(W-116,4,104,24,'#45d6ff');txt('SFX '+vlab(VOL.sfx),W-64,16,9,'#ffffff');}
 function audioTap(tp){if(tp.y>34)return false;const nx=v=>VSTEP[(VSTEP.indexOf(v)+1)%3]??1;if(tp.x>W-232&&tp.x<W-122){VOL.mus=nx(VOL.mus);saveVol();if(VOL.mus&&!music)startMusic('title');return true;}if(tp.x>W-116){VOL.sfx=nx(VOL.sfx);saveVol();sfx('pick');return true;}return false;}
 // ---------- MISSIONS ----------
-const MIS=[null,{name:'LAUNCH',sub:'Earth  ▶  The Moon',brief:['Captain, the Vorr have overrun our Moon outpost. Tranquility Base has gone dark.','Launch Pale Blue and punch through their fleet. Ace Kreel carries a shard of the Heart Crystal. Take it back!']},
- {name:'MOON BASE',sub:'Retake Tranquility Outpost',brief:['You made it! The outpost is crawling with blob minions.','Big Blorp is guarding the Moon shard. I\'ll talk you through it. Send him packing and grab that shard!']},
- {name:'TRIP TO MARS',sub:'The Moon  ▶  Mars',brief:['Captain, Pale Blue is running low on fuel, and the Vorr have captured all three refueling stations on the way to Mars.','Free each station and fill the tanks. Warden Krool holds the third shard at the Mars Gate.']},
- {name:'MARS LANDING',sub:'Save the Colony',brief:['Captain, the Earth colony on Mars went silent. Their robots came to find water and grow gardens. Now the Vorr control them.','Don\'t wreck those robots: zap them to break the Vorr hold and set them free. Find the colony leader. Somewhere down there is the Mars shard.']}];
+const MIS=[null,{name:'LAUNCH',sub:'Earth  ▶  The Moon',brief:['Captain, the Vorr have overrun our Moon outpost. Tranquility Base has gone dark.','Launch Pale Blue and punch through their fleet. Ace Kreel carries a Crystal Key. Take it back!']},
+ {name:'MOON BASE',sub:'Retake Tranquility Outpost',brief:['You made it! The outpost is crawling with blob minions.','Big Blorp is guarding the Moon Crystal Key. I\'ll talk you through it. Send him packing and grab that Crystal Key!']},
+ {name:'TRIP TO MARS',sub:'The Moon  ▶  Mars',brief:['Captain, Pale Blue is running low on fuel, and the Vorr have captured all three refueling stations on the way to Mars.','Free each station and fill the tanks. Warden Krool holds the third Crystal Key at the Mars Gate.']},
+ {name:'MARS LANDING',sub:'Save the Colony',brief:['Captain, the Earth colony on Mars went silent. Their robots came to find water and grow gardens. Now the Vorr control them.','Don\'t wreck those robots: zap them to break the Vorr hold and set them free. Find the colony leader. Somewhere down there is the Mars Crystal Key.']}];
 let misK=false;
 function drawMissions(){starfield(T*8);txt('SELECT MISSION',W/2,30,20,'#ffc53d');
  for(let n=1;n<=4;n++){const x=[0,90,247,404,561][n],sel=mSel===n,lock=n>unlocked;panel(x-76,60,152,200,sel?'#45d6ff':'#3a4180');if(sel)dglow(x,160,80,'#45d6ff',.15);
@@ -1587,7 +1587,7 @@ function drawMissions(){starfield(T*8);txt('SELECT MISSION',W/2,30,20,'#ffc53d')
 function drawCard(){const L=MIS[mission];starfield(T*14);if(mission===1)earth(520,250,90);else if(mission>=3)marsBall(520,250,80);else moonBall(520,250,90);
  const a=clamp(stateT*2,0,1);g.globalAlpha=a;txt('MISSION '+mission,W/2,70,34,'#ffc53d');txt(L.name,W/2,112,24,'#ffffff');txt(L.sub,W/2,140,11,'#45d6ff');g.globalAlpha=1;
  if(stateT<.8)return;const ln=L.brief[bLine],tt=stateT-.8;panel(28,234,94,114,'#ffc53d');dsp(portrait('hayes'),75,342,2.2);panel(132,250,486,90);txt('COMMANDER HAYES',145,264,12,'#ffc53d','left');
- {const TA=[0,'Run home, Earthlings. Every shard will be MINE.','Big Blorp will squash you flat, little captain!','Every fuel station is mine. Enjoy drifting!','Mars belongs to the Vorr now. Turn back!'][mission];if(TA&&IMG.comic_c07){g.save();g.beginPath();g.arc(586,62,34,0,TAU);g.clip();drawCover(IMG.comic_c07,540,20,92,84);g.restore();g.strokeStyle=OL;g.lineWidth=4;g.beginPath();g.arc(586,62,34,0,TAU);g.stroke();g.strokeStyle='#b04aff';g.lineWidth=2;g.stroke();bubble(TA,452,108,170,560,92,true);txt('KING MALAKAR',586,104,7,'#d0a0ff');}}
+ {const TA=[0,'Run home, Earthlings. Every Crystal Key will be MINE.','Big Blorp will squash you flat, little captain!','Every fuel station is mine. Enjoy drifting!','Mars belongs to the Vorr now. Turn back!'][mission];if(TA&&IMG.comic_c07){g.save();g.beginPath();g.arc(586,62,34,0,TAU);g.clip();drawCover(IMG.comic_c07,540,20,92,84);g.restore();g.strokeStyle=OL;g.lineWidth=4;g.beginPath();g.arc(586,62,34,0,TAU);g.stroke();g.strokeStyle='#b04aff';g.lineWidth=2;g.stroke();bubble(TA,452,108,170,560,92,true);txt('KING MALAKAR',586,104,7,'#d0a0ff');}}
  const shown=ln.slice(0,Math.floor(tt*45));wrap(shown,375,292,450,12,'#ffffff',19);if((T*3|0)%2)txt('▶',600,326,12,'#45d6ff');
  const tp=tapped();if(tp||pressedA||(AUTO&&tt>1.4)){pressedA=false;if(shown.length<ln.length&&!AUTO)stateT=99;else if(++bLine>=L.brief.length)(mission===4?playComic(MARSLAND,()=>go('moon')):mission===3?playComic(MARSGO,()=>go('space')):go(mission===1?'launchcut':mission===3?'space':'landing'));else stateT=.8;}}
 let launchFx=[];
