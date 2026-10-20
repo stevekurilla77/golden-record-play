@@ -17,7 +17,16 @@ function unlock(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioCon
   NOISE=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=NOISE.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
   const b=AC.createBufferSource();b.buffer=AC.createBuffer(1,1,22050);b.connect(AC.destination);b.start(0);// iOS unlock
  }catch(e){}}
- if(AC&&AC.state!=='running'&&!BGP)AC.resume().catch(()=>{});if(AC&&wantTheme&&!music&&!BGP)startMusic(...wantTheme);if(AC&&!AC._sc){AC._sc=1;AC.onstatechange=()=>{if(AC&&AC.state!=='running'&&!document.hidden&&!BGP)setTimeout(audioResume,300);};}}
+ if(AC&&AC.state!=='running'&&!BGP){try{AC.resume().catch(()=>{});}catch(e){}silentTick();}htmlKeepAlive();if(AC&&wantTheme&&!music&&!BGP)startMusic(...wantTheme);if(AC&&!AC._sc){AC._sc=1;AC.onstatechange=()=>{if(AC&&AC.state!=='running'&&!document.hidden&&!BGP)setTimeout(audioResume,300);};}}
+// iOS Safari unlock helpers: 1-sample silent buffer on every unlock attempt; 'playback' audio session so the
+// ring/silent switch doesn't mute the game; a silent looping <audio> started on the first gesture keeps the
+// media channel alive (skipped inside the Capacitor app, which already plays through the app's audio session).
+function silentTick(){try{const b=AC.createBufferSource();b.buffer=AC.createBuffer(1,1,22050);b.connect(AC.destination);b.start(0);}catch(e){}}
+try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+let SIL=null;function htmlKeepAlive(){if(BGP||window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())return;try{if(!SIL){const n=4410,buf=new ArrayBuffer(44+n*2),v=new DataView(buf),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+ w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,44100,true);v.setUint32(28,88200,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
+ SIL=new Audio(URL.createObjectURL(new Blob([buf],{type:'audio/wav'})));SIL.loop=true;SIL.setAttribute('playsinline','');SIL.volume=.01;}if(SIL.paused){const pr=SIL.play();pr&&pr.catch&&pr.catch(()=>{});}}catch(e){}}
+['touchend','pointerup','click','keydown','touchstart','pointerdown'].forEach(ev=>addEventListener(ev,()=>{if(!BGP)unlock();},{capture:true,passive:true}));
 function tone(f,t0,d,type='square',v=.12,f2,dest){if(!AC)return;const o=AC.createOscillator(),a=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);
  if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);a.gain.setValueAtTime(.0001,t0);a.gain.linearRampToValueAtTime(v,t0+.008);a.gain.exponentialRampToValueAtTime(.0005,t0+d);o.connect(a);a.connect(dest||sfxG);o.start(t0);o.stop(t0+d+.03);}
 function noise(t0,d,v,fType='lowpass',f=1200,f2,dest){if(!AC)return;const s=AC.createBufferSource(),fl=AC.createBiquadFilter(),a=AC.createGain();s.buffer=NOISE;fl.type=fType;fl.frequency.setValueAtTime(f,t0);if(f2)fl.frequency.exponentialRampToValueAtTime(f2,t0+d);
@@ -110,7 +119,7 @@ function startMusic(kind,v=0){if(kind==='game')kind=S==='moon'?'moon':'space';if
   step++;next+=spd;}},90);}
 function stopMusic(){if(music)clearInterval(music);music=null;curTheme=null;}
 let BGP=false,PAUSEBG=false;
-function audioSuspend(){if(S==='space'||S==='moon')PAUSEBG=true;BGP=true;if(music){clearInterval(music);music=null;curTheme=null;}if(AC&&AC.state==='running')AC.suspend().catch(()=>{});}
+function audioSuspend(){try{SIL&&SIL.pause();}catch(e){}if(S==='space'||S==='moon')PAUSEBG=true;BGP=true;if(music){clearInterval(music);music=null;curTheme=null;}if(AC&&AC.state==='running')AC.suspend().catch(()=>{});}
 function rebuildAudio(){const old=AC;AC=null;master=musG=sfxG=NOISE=null;music=null;curTheme=null;try{old&&old.close&&old.close();}catch(e){}unlock();}
 function audioResume(){BGP=false;if(!AC)return;const after=()=>{if(wantTheme&&!music){curTheme=null;startMusic(...wantTheme);}};if(AC.state==='running'){after();return;}
  let done=false;const fail=()=>{if(done)return;done=true;rebuildAudio();};
