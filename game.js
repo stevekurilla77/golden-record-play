@@ -1,4 +1,4 @@
-// Golden Record — Moon prototype. (c) 2026 Backline Vintage. PRIVATE. Original art drawn in code.
+// Pale Blue: Crystal Defenders (repo: golden-record). (c) 2026 Backline Vintage. PRIVATE. Original art drawn in code.
 (()=>{
 'use strict';
 const W=640,H=360,cv=document.getElementById('c');let g=cv.getContext('2d');
@@ -1007,10 +1007,12 @@ function debris(arr,cx){for(const q of arr){if(!q._s){q._s=1;q.rt=rnd(0,6);if(!F
 function bolt(x,y,big){dglow(x,y,big?16:13,'#40e0ff',.9);g.fillStyle='#7ff0ff';g.beginPath();g.roundRect(x-8,y-3,16,6,3);g.fill();g.fillStyle='#ffffff';g.beginPath();g.roundRect(x-5,y-1.5,10,3,1.5);g.fill();}
 function orb(x,y,col,r){dglow(x,y,r*2.8,col,.75);const s=pre('orb'+col+r,r*2+4,r*2+4,r+2,r+2,c=>{E(c,0,0,r,r);fo(c,ballG(c,0,0,r,r,col),1.1);gloss(c,-r*.35,-r*.4,r*.3,r*.18,.8);});dsp(s,x,y);}
 // ---------- TITLE ----------
-function logoSpr(){return pre('logo',560,90,280,45,x=>{x.font=`900 64px ${FONTF}`;x.textAlign='center';x.textBaseline='middle';const s='GOLDEN RECORD';
- x.lineJoin='round';x.lineWidth=16;x.strokeStyle='#ff4f7b';x.strokeText(s,4,6);x.lineWidth=10;x.strokeStyle=OL;x.strokeText(s,4,6);x.strokeText(s,0,0);
- x.fillStyle=lg(x,0,-26,0,26,['#fffbe0','#ffe36a','#ffc53d','#ff8a2a','#ffc53d','#ffe9a0']);x.fillText(s,0,0);
- x.save();x.beginPath();x.rect(-280,-40,560,34);x.clip();x.fillStyle='rgba(255,255,255,.35)';x.fillText(s,0,0);x.restore();});}
+function logoSpr(){return pre('logo2',560,92,280,46,x=>{x.textAlign='center';x.textBaseline='middle';x.lineJoin='round';
+ const L=(s,sz,y)=>{x.font=`900 ${sz}px ${FONTF}`;let w=x.measureText(s).width;if(w>520){sz=sz*520/w;x.font=`900 ${sz}px ${FONTF}`;}const k=sz/64;
+  x.lineWidth=16*k;x.strokeStyle='#ff4f7b';x.strokeText(s,4*k,y+6*k);x.lineWidth=10*k;x.strokeStyle=OL;x.strokeText(s,4*k,y+6*k);x.strokeText(s,0,y);
+  x.fillStyle=lg(x,0,y-sz*.4,0,y+sz*.4,['#fffbe0','#ffe36a','#ffc53d','#ff8a2a','#ffc53d','#ffe9a0']);x.fillText(s,0,y);
+  x.save();x.beginPath();x.rect(-280,y-sz*.62,560,sz*.53);x.clip();x.fillStyle='rgba(255,255,255,.35)';x.fillText(s,0,y);x.restore();};
+ L('PALE BLUE',50,-20);L('CRYSTAL DEFENDERS',26,20);});}
 function recordSpr(){return pre('rec',52,52,26,26,x=>{E(x,0,0,23,23);fo(x,ballG(x,0,0,23,23,'#d9a520'),1.6);x.strokeStyle='rgba(120,80,10,.55)';x.lineWidth=.8;for(let r=8;r<22;r+=2.5){x.beginPath();x.arc(0,0,r,0,TAU);x.stroke();}
  E(x,0,0,6,6);fo(x,ballG(x,0,0,6,6,'#8a6a18'),1);gloss(x,-9,-10,7,3,.5);});}
 
