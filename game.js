@@ -26,7 +26,13 @@ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
 let SIL=null;function htmlKeepAlive(){if(BGP||window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())return;try{if(!SIL){const n=4410,buf=new ArrayBuffer(44+n*2),v=new DataView(buf),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
  w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,44100,true);v.setUint32(28,88200,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
  SIL=new Audio(URL.createObjectURL(new Blob([buf],{type:'audio/wav'})));SIL.loop=true;SIL.setAttribute('playsinline','');SIL.volume=.01;}if(SIL.paused){const pr=SIL.play();pr&&pr.catch&&pr.catch(()=>{});}}catch(e){}}
-['touchend','pointerup','click','keydown','touchstart','pointerdown'].forEach(ev=>addEventListener(ev,()=>{if(!BGP)unlock();},{capture:true,passive:true}));
+let AUDTRY=0,NEEDREB=false;window.__aud={ev:'',n:0,reb:0,err:''};
+function gestureAudio(e){__aud.ev=e.type;__aud.n++;if(BGP&&!document.hidden){BGP=false;}if(BGP)return;
+ const real=e.type==='touchend'||e.type==='pointerup'||e.type==='click'||e.type==='keydown';
+ // iOS only honours resume()/new AudioContext() on a gesture END; if a context is stuck (created on touchstart, interrupted, or flagged by the resume watchdog) recreate it right here, inside the gesture
+ if(real&&AC&&(NEEDREB||(AC.state!=='running'&&AUDTRY>=1))){NEEDREB=false;AUDTRY=0;__aud.reb++;const old=AC;AC=null;master=musG=sfxG=NOISE=null;if(music){clearInterval(music);music=null;}curTheme=null;try{old.close&&old.close();}catch(x){}}
+ if(real||!AC)unlock();if(real&&AC&&AC.state!=='running')AUDTRY++;else if(AC&&AC.state==='running')AUDTRY=0;}
+['touchend','pointerup','click','keydown','touchstart','pointerdown'].forEach(ev=>addEventListener(ev,gestureAudio,{capture:true,passive:true}));
 function tone(f,t0,d,type='square',v=.12,f2,dest){if(!AC)return;const o=AC.createOscillator(),a=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);
  if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);a.gain.setValueAtTime(.0001,t0);a.gain.linearRampToValueAtTime(v,t0+.008);a.gain.exponentialRampToValueAtTime(.0005,t0+d);o.connect(a);a.connect(dest||sfxG);o.start(t0);o.stop(t0+d+.03);}
 function noise(t0,d,v,fType='lowpass',f=1200,f2,dest){if(!AC)return;const s=AC.createBufferSource(),fl=AC.createBiquadFilter(),a=AC.createGain();s.buffer=NOISE;fl.type=fType;fl.frequency.setValueAtTime(f,t0);if(f2)fl.frequency.exponentialRampToValueAtTime(f2,t0+d);
@@ -122,7 +128,7 @@ let BGP=false,PAUSEBG=false;
 function audioSuspend(){try{SIL&&SIL.pause();}catch(e){}if(S==='space'||S==='moon')PAUSEBG=true;BGP=true;if(music){clearInterval(music);music=null;curTheme=null;}if(AC&&AC.state==='running')AC.suspend().catch(()=>{});}
 function rebuildAudio(){const old=AC;AC=null;master=musG=sfxG=NOISE=null;music=null;curTheme=null;try{old&&old.close&&old.close();}catch(e){}unlock();}
 function audioResume(){BGP=false;if(!AC)return;const after=()=>{if(wantTheme&&!music){curTheme=null;startMusic(...wantTheme);}};if(AC.state==='running'){after();return;}
- let done=false;const fail=()=>{if(done)return;done=true;rebuildAudio();};
+ let done=false;const fail=()=>{if(done)return;done=true;if(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())rebuildAudio();else NEEDREB=true;};
  try{AC.resume().then(()=>{setTimeout(()=>{if(done)return;if(AC&&AC.state==='running'){done=true;after();}else fail();},250);}).catch(fail);}catch(e){fail();}setTimeout(()=>{if(!done&&AC&&AC.state!=='running')fail();},1500);}
 document.addEventListener('visibilitychange',()=>{document.hidden?audioSuspend():audioResume();});
 addEventListener('pagehide',audioSuspend);addEventListener('pageshow',()=>{if(!document.hidden)audioResume();});addEventListener('focus',()=>{if(!document.hidden)audioResume();});
@@ -1318,6 +1324,7 @@ function frame(now){requestAnimationFrame(frame);if(document.hidden){last=now;re
  try{if(S==='title')drawTitle();else if(S==='intro')drawIntro();else if(S==='select')drawSelect();
   else if(S==='space'){if(!GOVER&&!PAUSEBG&&!CRY)updSpace(dt);drawSpace();if(CRY)crystalCut();}else if(S==='landing')drawLanding();else if(S==='moon'){if(!GOVER&&!PAUSEBG&&!CRY)updMoon(dt);drawMoon();if(CRY)crystalCut();}else if(S==='victory')drawVictory();else if(S==='missions')drawMissions();else if(S==='card')drawCard();else if(S==='launchcut')drawLaunchCut();else if(S==='mdone')drawMDone();else if(S==='comic')drawComic();}
  catch(e){console.error(e);}
+ if(Q.has('debug')){const l='AC:'+(AC?AC.state:'none')+' sr:'+(AC?AC.sampleRate:0)+' master:'+(master?master.gain.value.toFixed(2):'-')+' mus:'+(musG?musG.gain.value.toFixed(2):'-')+' sfx:'+(sfxG?sfxG.gain.value.toFixed(2):'-')+' VOL:'+VOL.mus+'/'+VOL.sfx+' music:'+(music?curTheme:'off')+' want:'+(wantTheme?wantTheme.join(''):'-')+' BGP:'+BGP+' hid:'+document.hidden+' sess:'+(navigator.audioSession?navigator.audioSession.type:'n/a')+' silEl:'+(SIL?(SIL.paused?'paused':'playing'):'none')+' ev:'+__aud.ev+'#'+__aud.n+' reb:'+__aud.reb;g.fillStyle='rgba(0,0,0,.75)';g.fillRect(60,46,W-120,16);txt(l,W/2,54,6.5,'#7dff8a');}
  try{if(PAUSEBG&&!(S==='space'||S==='moon'))PAUSEBG=false;if(PAUSEBG){g.fillStyle='rgba(8,4,24,.7)';g.fillRect(0,0,W,H);txt('PAUSED',W/2,150,30,'#ffc53d');if((T*2|0)%2)txt('TAP TO RESUME',W/2,192,12,'#ffffff');const tp=tapped();if(tp||K.Enter){PAUSEBG=false;unlock();}}else if(GOVER&&(S==='space'||S==='moon'))drawGameOver();if(SAVET>0&&!(S==='space'&&sp&&sp.cut)&&S!=='comic'){SAVET-=dt;g.globalAlpha=Math.min(1,SAVET*2);panel(8,128,100,22,'#5fe36a');txt('GAME SAVED',58,139,9,'#5fe36a');g.globalAlpha=1;}}catch(e){console.error(e);}
  if(S!=='moon')pressedA=false;pressedAny=false;}
 window.GR={get GEMS(){return GEMS},get CRY(){return CRY},state:S,go,get M(){return M},get sp(){return sp},setCap:i=>cap=i,get comicI(){return comicI},VK,unlocked,get t(){return stateT},flashSaved:()=>{SAVET=1.8;},setGO:()=>{GOVER=()=>{};GOT=1;}};
