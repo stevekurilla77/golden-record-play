@@ -531,10 +531,12 @@ function initMoon(){const G0=GROUND,P=(x,y,w)=>[x,y,w,12],MR=mission===4;
 // ================= MISSION 4: MARS LANDING (colony robots, leader, Dust Whale) =================
 const MSECT4=[[0,'LANDING ZONE'],[1600,'RED CANYON'],[3700,'MOUNTAIN COLONY'],[5480,'COLONY GATE'],[5820,'GREENHOUSE LABS'],[7000,'TUNNEL MOUTH'],[7700,'THE CHIMNEY'],[8700,'CRYSTAL CAVERNS'],[10400,'DRY RIVERBED'],[12650,'WATER CAVERN']];
 
-function marsLayout(m,P){const G0=GROUND,keep=m.plats.filter(q=>q[0]>=3850&&q[0]<7000);
+function marsLayout(m,P){const G0=GROUND,keep=m.plats.filter(q=>q[0]>=3850&&q[0]<5480);
  m.gaps=[[1100,1190],[1900,2010],[2600,2950],[3350,3470],[5000,5080],[9000,9120],[9600,9760],[10700,10830],[11500,11880]];
  m.plats=[P(260,220,100),P(430,170,90),P(600,210,110),P(820,180,90),P(980,130,80),P(1080,210,130),P(1300,220,90),P(1420,150,80),P(1500,75,70),P(1440,-10,90),
   P(1700,200,90),P(1880,140,80),P(2040,200,90),P(2250,220,90),P(2420,190,90),P(2980,210,100),P(3200,170,90),P(3520,220,90),...keep,
+  // colony gate + greenhouse labs: Mars-colony layout (airlock steps, tiered planter beds)
+  P(5560,215,90),P(5700,150,80),P(5880,230,130),P(6080,180,110),P(6260,125,90),P(6420,200,120),P(6600,150,100),P(6780,215,120),
   // UNDERGROUND: tunnel mouth
   P(7300,220,90),P(7470,155,80),
   // the Chimney: zig-zag climb, then float down the shaft
@@ -569,6 +571,18 @@ function marsBack(cx){const G0=GROUND,m=M;
   panel(A+150,G0-120,130,22,'#ff7a29');txt('MARS COLONY ONE',A+215,G0-109,8,'#ffc53d');}}
 
 
+function colonyInt(a,b,top,kind,cx){const G0=GROUND,A=a-cx,B=b-cx;if(B<0||A>W)return;const h=G0-top,AIR=kind==='air';
+ g.fillStyle=lg(g,0,top,0,G0,AIR?['#5a2418','#3a160e','#24100a']:['#6a3420','#4a2214','#2a140c']);g.fillRect(A,top,B-A,h);
+ // rounded rock-cut arches
+ for(let x=a+40;x<b;x+=170){const X=x-cx;if(X<-90||X>W+90)continue;g.strokeStyle=OL;g.lineWidth=7;g.beginPath();g.arc(X,G0,78,Math.PI,TAU);g.stroke();g.strokeStyle=AIR?'#c8643a':'#d07a4a';g.lineWidth=4;g.beginPath();g.arc(X,G0,78,Math.PI,TAU);g.stroke();}
+ if(AIR){for(let x=A;x<B;x+=40){g.fillStyle='#ffc53d';g.beginPath();g.moveTo(x,top);g.lineTo(x+20,top);g.lineTo(x+10,top+14);g.closePath();g.fill();}
+  for(const ox of[a+120,b-110]){const X=ox-cx;circ(X,G0-150,26,OL);circ(X,G0-150,22,'#2a1a3a');circ(X,G0-150,22,'rgba(255,140,90,.25)');circ(X-7,G0-157,5,'rgba(255,255,255,.4)');}
+  const on=(T*2|0)%2;circ((a+b)/2-cx,top+26,7,OL);circ((a+b)/2-cx,top+26,5,on?'#ff3a3a':'#601010');if(on)dglow((a+b)/2-cx,top+26,16,'#ff3a3a',.6);
+  panel((a+b)/2-cx-40,G0-125,80,18,'#ff7a29');txt('AIRLOCK',(a+b)/2-cx,G0-116,8,'#ffc53d');}
+ else{for(let x=a+90;x<b;x+=170){const X=x-cx;if(X<-60||X>W+60)continue;g.fillStyle=OL;g.beginPath();g.ellipse(X,top+40,44,26,0,0,TAU);g.fill();g.fillStyle=lg(g,0,top+14,0,top+66,['#ffd8a0','#ff9a5a']);g.beginPath();g.ellipse(X,top+40,40,22,0,0,TAU);g.fill();dglow(X,top+40,50,'#ffb070',.25);}
+  for(let x=a+20;x<b;x+=110){const X=x-cx;if(X<-60||X>W+60)continue;g.fillStyle=OL;g.beginPath();g.roundRect(X-30,G0-34,60,34,8);g.fill();g.fillStyle='#8a4a2a';g.beginPath();g.roundRect(X-27,G0-31,54,30,6);g.fill();
+   const wet=M.ldr;for(let k=0;k<3;k++){const px=X-16+k*16;g.fillStyle=wet?'#5fc040':'#8a7a3a';g.beginPath();g.ellipse(px,G0-38,7,11,wet?0:.6,0,TAU);g.fill();g.strokeStyle=OL;g.lineWidth=1.5;g.stroke();}}}
+ g.fillStyle=OL;g.fillRect(A,top-6,B-A,8);}
 function waterDrop(x,y){dglow(x,y,20,'#7ae8ff',.8);g.fillStyle=OL;g.beginPath();g.moveTo(x,y-14);g.quadraticCurveTo(x+12,y+2,x,y+11);g.quadraticCurveTo(x-12,y+2,x,y-14);g.fill();g.fillStyle=lg(g,0,y-12,0,y+10,['#e8ffff','#7ae8ff','#2a8ad0']);g.beginPath();g.moveTo(x,y-11);g.quadraticCurveTo(x+9,y+2,x,y+8.5);g.quadraticCurveTo(x-9,y+2,x,y-11);g.fill();circ(x-3,y,2,'#ffffff');}
 // Underground art: rounded stalactites/stalagmites, amber crystal clusters, glow-bugs (light sources), the Chimney rock column, dry riverbed
 function caveArt(cx){const G0=GROUND,m=M,[da,db]=m.dark;
@@ -695,7 +709,7 @@ function updMoon(dt){const m=M;if(m.cut){m.cut.t+=dt*(AUTO?3:1);return;}if(AUTO)
  if(m.py>GROUND+2){const q=m.gaps.find(q=>m.px>q[0]-12&&m.px<q[1]+12);if(q)m.px=clamp(m.px,q[0]+6,q[1]-6);}
  if(m.on&&m.py>=GROUND-1&&!m.gaps.some(q=>m.px>q[0]-60&&m.px<q[1]+60))m.safe=m.px;
  if(m.py>GROUND+150){m.px=m.safe;m.py=GROUND;m.vx=0;m.vy=0;m.on=true;m.inv=1.5;if(!AUTO)m.hp=Math.max(1,m.hp-1);m.msgs.push({t:'BEAMED BACK!',l:1.5});sfx('pick');}
- for(const c of m.cps)if(!c.on&&m.px>c.x-10){c.on=true;m.msgs.push({t:'CHECKPOINT',l:1.6});saveCP(m.lv,m.cps.indexOf(c));sfx('pick');m.hp=Math.min(m.maxhp,m.hp+2);}
+ for(const c of m.cps)if(!c.on&&m.px>c.x-10){c.on=true;m.msgs=m.msgs.filter(q=>q.t!=='CHECKPOINT');m.msgs.push({t:'CHECKPOINT',l:1.6});saveCP(m.lv,m.cps.indexOf(c));sfx('pick');m.hp=Math.min(m.maxhp,m.hp+2);}
  while(m.tipI<m.tips.length&&m.px>m.tips[m.tipI][0]){m.tip={t:m.tips[m.tipI][1],l:5.5};m.tipI++;}if(m.tip&&(m.tip.l-=dt)<=0)m.tip=null;
  m.run+=Math.abs(m.vx)*dt*.12;m.cool-=dt;m.inv-=dt;m.shooting-=dt;
  if(I.F&&m.cool<=0){const y=m.py-24,base={x:m.px+m.face*20,y,vx:m.face*420,vy:0};m.shots.push(base);
@@ -1440,7 +1454,7 @@ function baseBack(cx){const G0=GROUND,m=M;if(m.mars)marsBack(cx);
   g.fillStyle=m.mars?'#1a0806':'#0c0a14';g.beginPath();g.moveTo(A,-500);for(let x=0;x<=db-da;x+=40)g.lineTo(A+x,(m.mars&&da+x>7600&&da+x<8700?-470:-40)+Math.sin((da+x)*.013)*30+((da+x)*7%23));g.lineTo(B,-500);g.fill();
   for(let x=da+80;x<db;x+=260){const X=x-cx;if(X<-40||X>W+40)continue;if(!m.mars)for(let k=0;k<3;k++){g.fillStyle='#45d6ff';g.globalAlpha=.8;g.beginPath();g.moveTo(X+k*9,G0-60-k*12);g.lineTo(X+k*9+5,G0-80-k*14);g.lineTo(X+k*9+10,G0-60-k*12);g.fill();g.globalAlpha=1;}dglow(X+10,G0-70,24,'#45d6ff',.4);}
   if(m.mars)caveArt(cx);else for(const lx of m.lamps){const X=lx-cx;if(X<-30||X>W+30)continue;g.fillStyle=OL;g.fillRect(X-3,G0-110,6,110);g.fillStyle='#5a6088';g.fillRect(X-1.5,G0-108,3,108);circ(X,G0-114,6,'#fff2c0',OL);dglow(X,G0-114,30,'#ffd27a',.8);}}
- for(const s of INTS)if(!m.mars||s[0]<7000)interior(s[0],s[1],s[2],s[3],cx);if(m.mars)marsGardens(cx);
+ for(const s of INTS)if(m.mars){if(s[0]<7000)colonyInt(s[0],s[1],s[2],s[3],cx);}else interior(s[0],s[1],s[2],s[3],cx);if(m.mars)marsGardens(cx);
  const k=5120-cx;if(k>-50&&k<W+50)txt(m.mars?'COLONY LOOKOUT':'KOSMOS CACHE',k+70,-440,9,'#b9f6ff');
  const shx=140-cx;if(shx>-150&&shx<W+150&&!m.mars){g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(shx,G0+2,70,7,0,0,TAU);g.fill();landerShip(shx,G0-12*1.4-28,1,1,1.4,0,G0);}
  for(const c of m.cps){const X=c.x-cx;if(c.x===140||X<-20||X>W+20)continue;g.fillStyle=OL;g.fillRect(X-4,G0-60,8,60);g.fillStyle='#8a90b0';g.fillRect(X-2,G0-58,4,58);const col=c.on?'#5fe36a':'#ff4f7b';circ(X,G0-64,7,col,OL);dglow(X,G0-64,c.on?26:14,col,.7);}}
@@ -1547,11 +1561,11 @@ const MARSGO=[
 const MARSLAND=[
  {d:5,int:3,cap:'Mars. Ten minutes to touchdown.',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#2a0c1e','#8a3020','#d06a3a']);g.fillRect(0,0,W,H);g.fillStyle='#6a2416';g.beginPath();g.moveTo(0,300);g.lineTo(140,190);g.lineTo(260,240);g.lineTo(380,150);g.lineTo(520,250);g.lineTo(W,210);g.lineTo(W,H);g.lineTo(0,H);g.fill();for(let i=0;i<6;i++){circ(330+i*16,200+((i*7)%3)*8,3.4,OL);circ(330+i*16,200+((i*7)%3)*8,2.4,'#ffe066');}ship(150+t*30,90+t*10,T,1);},bub:[{s:'There\'s the colony, built right into the mountain. No lights on. That\'s not good.',x:300,y:56,w:250,tx:200,ty:100,at:.5}]},
  {d:5,int:3,img:'c10',cap:'Mission Control, Earth.',bub:[{s:'The colony robots stopped answering us. Free them, find the leader, and watch for Vorr.',x:330,y:70,w:270,tx:300,ty:180,at:.4}]},
- {d:5,int:3,cap:'Somewhere in the tunnels...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#1a0a10','#3a1a10']);g.fillRect(0,0,W,H);g.save();g.translate(200,250);g.scale(1.6,1.6);blob(0,0,T,{r:26,face:1,angry:1,col:'#4fd65c'});dsp(domeSpr(),0,0);g.restore();dustWhale(460,220,.7,T,{});},bub:[{s:'BLORP! Big Blorp is back! Dust Whale guard my water, and Malakar give Blorp a NEW robot!',x:40,y:60,w:270,tx:200,ty:180,at:.4}],fx:{s:'BLORP!',x:520,y:80,sz:26,at:.3}}];
+ {d:5,int:3,cap:'Somewhere in the tunnels...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#1a0a10','#3a1a10']);g.fillRect(0,0,W,H);g.save();g.translate(200,250);g.scale(1.6,1.6);blob(0,0,T,{r:26,face:1,angry:1,col:'#4fd65c'});dsp(domeSpr(),0,0);g.restore();dustWhale(460,220,.7,T,{});},bub:[{s:'BLORP! Big Blorp is back! Dust Whale guard my water, and Malakar give Blorp a NEW robot!',x:40,y:60,w:270,tx:200,ty:180,at:.4}],fx:{s:'BLORP!',x:500,y:300,sz:26,at:.3}}];
 const MARSWIN=[
  {d:4.5,int:3,cap:'Meanwhile, behind a rock...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#3a1a10','#7a3020']);g.fillRect(0,0,W,H);g.save();g.translate(220+t*60,250);g.scale(1.8,1.8);blob(0,0,T*2,{r:24,face:1,scared:1,col:'#4fd65c'});dsp(domeSpr(),0,0);g.restore();},bub:[{s:'My whale! My water! Big Blorp is NOT having a good week. Run away!',x:330,y:60,w:260,tx:300,ty:200,at:.4}],fx:{s:'SCRAM!',x:520,y:300,sz:26,at:.3}},
  {d:5,int:3,cap:'The Dust Whale lets go...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#3a1a10','#1a0a08']);g.fillRect(0,0,W,H);for(let i=0;i<40;i++){const u=((t*.6+i/40)%1);circ(100+i*12+Math.sin(i)*20,300-u*260,4+i%3,'#7ae8ff');}dustWhale(320,220,.8,T,{});},bub:[{s:'Hic! Okay okay! Take your water back. Glub.',x:380,y:60,w:220,tx:360,ty:170,at:.5}],fx:{s:'SPLOOOSH!',x:180,y:80,sz:30,at:.2}},
- {d:5.5,int:3,cap:'The colony gardens drink it up.',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#ff9a6a','#c0582e']);g.fillRect(0,0,W,H);for(let i=0;i<9;i++){const x=50+i*68,gr=clamp(t*1.4-i*.1,0,1);g.fillStyle='#4a8a3a';g.beginPath();g.ellipse(x,330-gr*20,22*gr+4,30*gr+4,0,Math.PI,TAU);g.fill();if(gr>.6){circ(x,300-gr*30,7,OL);circ(x,300-gr*30,5.5,['#ff7ae0','#ffe066','#7ae8ff'][i%3]);}}leaderBot(320,310,T,false);colonyBot(200,320,T,1,{freed:1});colonyBot(450,320,T+1,-1,{freed:1});},bub:[{s:'Our gardens! They\'re blooming! Thank you, Captain!',x:360,y:60,w:240,tx:330,ty:200,at:.5}],fx:{s:'BLOOM!',x:150,y:80,sz:28,at:.4}},
+ {d:5.5,int:3,cap:'The water flows back to the colony gardens!',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#ff9a6a','#c0582e']);g.fillRect(0,0,W,H);for(let i=0;i<9;i++){const x=50+i*68,gr=clamp(t*1.4-i*.1,0,1);g.fillStyle='#4a8a3a';g.beginPath();g.ellipse(x,330-gr*20,22*gr+4,30*gr+4,0,Math.PI,TAU);g.fill();if(gr>.6){circ(x,300-gr*30,7,OL);circ(x,300-gr*30,5.5,['#ff7ae0','#ffe066','#7ae8ff'][i%3]);}}leaderBot(320,310,T,false);colonyBot(200,320,T,1,{freed:1});colonyBot(450,320,T+1,-1,{freed:1});},bub:[{s:'The water is back! Our gardens! They\'re blooming! Thank you, Captain!',x:360,y:60,w:240,tx:330,ty:200,at:.5}],fx:{s:'BLOOM!',x:150,y:80,sz:28,at:.4}},
  {d:5.5,int:3,cap:'The Mars Crystal Key!',draw:t=>{starfield(T*4);dglow(320,180,80+Math.sin(T*3)*8,'#b04aff',.6);g.fillStyle=OL;g.beginPath();g.moveTo(320,100);g.lineTo(360,180);g.lineTo(320,260);g.lineTo(280,180);g.closePath();g.fill();g.fillStyle=lg(g,0,100,0,260,['#f0c0ff','#b04aff','#5a1a8a']);g.beginPath();g.moveTo(320,108);g.lineTo(352,180);g.lineTo(320,252);g.lineTo(288,180);g.closePath();g.fill();},bub:[{s:'That makes four Crystal Keys! The Heart Crystal is starting to glow. Voyager, here we come!',x:30,y:200,w:240,tx:280,ty:180,at:.5}]},
  {d:5.5,int:3,img:'c07',cap:'On the Vorr flagship...',bub:[{s:'FOUR Crystal Keys?! Fine. Collect them all, Earthlings. I will take them at Voyager!',x:340,y:170,w:260,tx:330,ty:150,at:.6}]},
  {d:5.5,int:3,cap:'Then, a crackling signal...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#0a0a20','#1a1040']);g.fillRect(0,0,W,H);starfield(T*4);moonBall(470,120,46);for(let k=0;k<4;k++){const r=((t*.8+k/4)%1)*90;g.strokeStyle=`rgba(255,224,102,${1-r/90})`;g.lineWidth=3;g.beginPath();g.arc(470,120,46+r,0,TAU);g.stroke();}ship(160,230,T,1);},bub:[{s:'...HELP... trapped... Vorr... moon of Mars... WOOF... I mean, over!',x:40,y:50,w:260,tx:420,ty:130,at:.5}],fx:{s:'SOS!',x:470,y:240,sz:28,at:.3}},
@@ -1580,7 +1594,7 @@ function drawComic(){if(!CB)CB=COMIC;if(stateT<.05&&comicT===0&&comicI===0)comic
    placed.push([x-pad,y-pad,x+q.w+pad,y+h+pad]);bubble(q.s,x+ox,y,q.w,q.tx+ox,q.ty,q.shout);}}
  if(b.fx&&t>b.fx.at)sfxText(b.fx.s,b.fx.x+ox,b.fx.y,b.fx.sz,t-b.fx.at,b.fx.rot??-.15,b.fx.c1,b.fx.c2);
  for(let i=0;i<CB.length;i++)circ(W/2-CB.length*5+i*10,7,2.6,i===comicI?'#ffc53d':'#4a4a6a');
- panel(W-104,4,96,24,'#ff7a29');txt('SKIP ▶▶',W-56,16,10,'#ffffff');if(t>.4){g.globalAlpha=.55+.45*Math.sin(T*5);txt('TAP ▶',W-136,16,10,'#ffe066');g.globalAlpha=1;}
+ panel(W-104,4,96,24,'#ff7a29');txt('SKIP ▶▶',W-56,16,10,'#ffffff');if(t>.4){g.globalAlpha=.55+.45*Math.sin(T*5);txt('TAP ▶',W-136,7,8,'#ffe066');g.globalAlpha=1;}
  const tp=tapped();if(tp&&tp.x>W-110&&tp.y<34){endComic();return;}
  const rd=CEND?1:.4,fresh=!tp||!CEND||!tp.st||tp.st>performance.now()-(t-rd)*1000;
  if(tp||pressedA||(AUTO&&t>b.d)){const pa=pressedA;pressedA=false;if(AUTO&&t>b.d){comicGo(comicI+1);if(comicI>=CB.length)endComic();return;}if(t<rd||(CEND&&pa&&!tp)||!fresh)return;comicGo(comicI+1);if(comicI>=CB.length)endComic();}}
@@ -1696,6 +1710,6 @@ function frame(now){requestAnimationFrame(frame);if(document.hidden){last=now;re
  if(Q.has('debug')){const l='AC:'+(AC?AC.state:'none')+' sr:'+(AC?AC.sampleRate:0)+' master:'+(master?master.gain.value.toFixed(2):'-')+' mus:'+(musG?musG.gain.value.toFixed(2):'-')+' sfx:'+(sfxG?sfxG.gain.value.toFixed(2):'-')+' VOL:'+VOL.mus+'/'+VOL.sfx+' music:'+(music?curTheme:'off')+' want:'+(wantTheme?wantTheme.join(''):'-')+' BGP:'+BGP+' hid:'+document.hidden+' sess:'+(navigator.audioSession?navigator.audioSession.type:'n/a')+' silEl:'+(SIL?(SIL.paused?'paused':'playing'):'none')+' ev:'+__aud.ev+'#'+__aud.n+' reb:'+__aud.reb;g.fillStyle='rgba(0,0,0,.75)';g.fillRect(60,46,W-120,16);txt(l,W/2,54,6.5,'#7dff8a');}
  try{if(PAUSEBG&&!(S==='space'||S==='moon'))PAUSEBG=false;if(PAUSEBG){g.fillStyle='rgba(8,4,24,.7)';g.fillRect(0,0,W,H);txt('PAUSED',W/2,150,30,'#ffc53d');if((T*2|0)%2)txt('TAP TO RESUME',W/2,192,12,'#ffffff');const tp=tapped();if(tp||K.Enter){PAUSEBG=false;unlock();}}else if(GOVER&&(S==='space'||S==='moon'))drawGameOver();if(SAVET>0&&!(S==='space'&&sp&&sp.cut)&&S!=='comic'){SAVET-=dt;g.globalAlpha=Math.min(1,SAVET*2);panel(8,128,100,22,'#5fe36a');txt('GAME SAVED',58,139,9,'#5fe36a');g.globalAlpha=1;}}catch(e){console.error(e);}
  if(S!=='moon')pressedA=false;pressedAny=false;}
-window.GR={shard:l=>shardMoment(l,()=>{}),openPause:()=>openPause(),comicJump:i=>{comicI=i;comicT=0;},get SHM(){return SHM},get SHARDS(){return SHARDS},startMission:n=>startMission(n),play:a=>playComic(a==='MOONWIN'?MOONWIN:INTER1,()=>go('victory')),mz:moonZone,get pm(){return !!PAUSEM},get GEMS(){return GEMS},get CRY(){return CRY},state:S,go,get M(){return M},get sp(){return sp},setCap:i=>cap=i,get comicI(){return comicI},VK,unlocked,get t(){return stateT},flashSaved:()=>{SAVET=1.8;},setGO:()=>{GOVER=()=>{};GOT=1;}};
+window.GR={pc:(n,i)=>{playComic({COMIC,INTER1,MOONWIN,MARSGO,MARSLAND,MARSWIN,MARSARR}[n],()=>{});comicI=i||0;},beats:n=>({COMIC,INTER1,MOONWIN,MARSGO,MARSLAND,MARSWIN,MARSARR}[n].length),shard:l=>shardMoment(l,()=>{}),openPause:()=>openPause(),comicJump:i=>{comicI=i;comicT=0;},get SHM(){return SHM},get SHARDS(){return SHARDS},startMission:n=>startMission(n),play:a=>playComic(a==='MOONWIN'?MOONWIN:INTER1,()=>go('victory')),mz:moonZone,get pm(){return !!PAUSEM},get GEMS(){return GEMS},get CRY(){return CRY},state:S,go,get M(){return M},get sp(){return sp},setCap:i=>cap=i,get comicI(){return comicI},VK,unlocked,get t(){return stateT},flashSaved:()=>{SAVET=1.8;},setGO:()=>{GOVER=()=>{};GOT=1;}};
 comicArt();go('title');requestAnimationFrame(frame);
 })();
