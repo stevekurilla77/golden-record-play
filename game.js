@@ -481,16 +481,17 @@ function initMoon(){const G0=GROUND,P=(x,y,w)=>[x,y,w,12],MR=mission===4;
  lowg:[[8420,8740]],dark:[9200,12650],lamps:[],
  cps:[140,1700,3750,5600,7050,8800,9260,11000,12700].map(x=>({x,on:x===140}))};
  for(let x=9330;x<12650;x+=320)M.lamps.push(x);
+ if(MR)marsLayout(M,P);
  const m=M,gf=[600,760,950,1100,1480,1800,2350,2560,3200,3600,3950,4150,4600,4900,5150,5300,5700,6000,6400,6900,7200,7600,7800,8550,8900,9050,9500,9850,10100,10650,11100,12100,12450,12950,13100,13300,13500];
  const pf=[[700,220],[1300,210],[2030,160],[2460,170],[4100,170],[4665,-330],[4835,-300],[5010,-340],[6150,170],[6360,220],[7350,150],[10600,200],[11040,210],[13200,180]];
  const blk=x=>m.gaps.some(q=>x>q[0]-20&&x<q[1]+20)||m.walls.some(w=>w[3]>40&&x>w[0]-20&&x<w[0]+w[2]+20);
  for(const x of gf)if(!blk(x))m.foes.push({x,y:G0,vx:0,t:rnd(0,9),hp:3,face:-1,mode:'walk',mt:rnd(1,3),flee:Math.random()<.3});
- for(const[x,y]of pf)m.foes.push({x,y,vx:0,t:rnd(0,9),hp:3,face:-1,mode:'walk',mt:rnd(1,3),flee:false});
+ for(const[x,y]of pf)if(!MR||m.plats.some(q=>x>q[0]&&x<q[0]+q[2]&&Math.abs(q[1]-y)<3))m.foes.push({x,y,vx:0,t:rnd(0,9),hp:3,face:-1,mode:'walk',mt:rnd(1,3),flee:false});
  for(const[x,y]of[[2580,110],[6200,90],[6650,80],[7500,110],[10200,110],[11600,130],[4000,100]])m.foes.push({type:'squid',x,y,x0:x,y0:y,hp:4,t:rnd(0,9),face:-1,ft:rnd(1,2.5)});
  for(const[x,y]of[[1300,150],[2850,160],[3400,140],[7300,90],[7650,120],[7800,150],[9700,150],[10800,110],[12250,110],[13000,150]])m.foes.push({type:'bug',x,y,x0:x,y0:y,hp:2,t:rnd(0,9),face:-1});
  m.picks=[{x:1080,y:130,k:'hp'},{x:1265,y:-60,k:'gem',gi:0},{x:1300,y:-60,k:'life'},{x:10760,y:62,k:'gem',gi:1},{x:5230,y:-410,k:'life'},{x:2135,y:-70,k:'gem',gi:2},{x:2460,y:140,k:'spread'},{x:3600,y:G0-20,k:'hp'},{x:4460,y:75,k:'hp'},{x:5190,y:-410,k:'gem',gi:3},
   {x:6790,y:120,k:'hp'},{x:8670,y:-180,k:'gem',gi:4},{x:10030,y:190,k:'hp'},{x:11230,y:140,k:'hp'},{x:12230,y:140,k:'hp'},{x:13180,y:150,k:'hp'}];
- if(MR)marsify(m);else m.tips=[[40,'Welcome to the Moon, Captain. The outpost is ahead. The Vorr overran it, so let\'s take it back.'],[300,'Tap JUMP to hop. Up here you\'ll float!'],[560,'Blob minions! Tap FIRE to blast them.'],
+ if(MR)marsify(m);if(!MR)m.tips=[[40,'Welcome to the Moon, Captain. The outpost is ahead. The Vorr overran it, so let\'s take it back.'],[300,'Tap JUMP to hop. Up here you\'ll float!'],[560,'Blob minions! Tap FIRE to blast them.'],
   [880,'HOLD JUMP for a high jump. High ledges often hide goodies.'],[1060,'Pink capsules restore energy. Gold tanks raise your max energy for good.'],[1290,'Zibbits! Those flappy-eared flyers swoop at you. Shoot them down.'],
   [1690,'See that beacon? It\'s a checkpoint. If you go down, we\'ll rebuild you there.'],[2120,'Pit ahead. Fall in and I\'ll beam you back, but it costs energy.'],[2650,'Moving platforms! Time your jump and ride them across.'],
   [3760,'There\'s the outpost. Those ledges climb high. I bet Kosmos hid something up top...'],[5520,'Airlock B. Careful inside, the Vorr have been busy in the labs.'],[6100,'Squid gunners fire spreads. Keep moving and jump their shots.'],
@@ -500,12 +501,38 @@ function initMoon(){const G0=GROUND,P=(x,y,w)=>[x,y,w,12],MR=mission===4;
 
 // ================= MISSION 4: MARS LANDING (colony robots, leader, Dust Whale) =================
 const MSECT4=[[0,'LANDING ZONE'],[1600,'RED CANYON'],[3700,'MOUNTAIN COLONY'],[5480,'COLONY GATE'],[5820,'GREENHOUSE LABS'],[7000,'PUMP ROOM'],[7880,'DROP SHAFT'],[8740,'MAINTENANCE TUNNEL'],[9200,'DEEP TUNNELS'],[12650,'WATER CAVERN']];
+
+function marsLayout(m,P){const G0=GROUND,keep=m.plats.filter(q=>q[0]>=3850&&q[0]<=9000);
+ m.gaps=[[1100,1190],[1900,2010],[2600,2950],[3350,3470],[5000,5080],[9500,9620],[10450,10570],[11500,11880]];
+ m.plats=[P(260,220,100),P(430,170,90),P(600,210,110),P(820,180,90),P(980,130,80),P(1080,210,130),P(1300,220,90),P(1420,150,80),P(1500,75,70),P(1440,-10,90),
+  P(1700,200,90),P(1880,140,80),P(2040,200,90),P(2250,220,90),P(2420,190,90),P(2980,210,100),P(3200,170,90),P(3520,220,90),...keep,
+  P(9300,220,100),P(9650,190,90),P(9820,220,100),P(10100,170,90),P(10280,210,90),P(10600,200,90),P(10700,130,80),P(10780,60,70),P(11000,210,100),P(11250,170,90),
+  P(11950,220,100),P(12150,170,100),P(12400,120,90),P(12900,220,100),P(13150,180,100)];
+ m.walls=[[700,G0-60,40,60],[1600,G0-110,100,110],[2150,G0-120,110,120],[4700,G0-60,40,60],[6450,G0-50,40,50],[8380,-40,40,340],[9950,G0-70,50,70],[10850,G0-110,60,110],[12300,G0-100,50,100]];
+ m.movers=[{x0:2610,y0:250,dx:250,dy:0,w:90,sp:.55,ph:0},{x0:3345,y0:230,dx:60,dy:0,w:80,sp:.8,ph:1},{x0:7420,y0:250,dx:0,dy:-120,w:80,sp:.7,ph:0},{x0:11510,y0:240,dx:280,dy:0,w:90,sp:.5,ph:2}];
+ m.craters=[[520,70],[1250,80],[2300,60],[3100,80],[4550,70],[12700,90],[13300,80]];}
+// Mars scenery: canyon spires, the mountain colony face with its door, greenhouse gardens, dust haze
+function marsGardens(cx){const G0=GROUND,m=M;
+ // greenhouse gardens (5820-7000): rounded glass domes with wilted or blooming plants
+ for(const[gx,r]of[[5900,60],[6250,46],[6650,64]]){const X=gx-cx;if(X<-r-20||X>W+r+20)continue;const bloom=m.ldr;
+  for(let k=-2;k<=2;k++){const px=X+k*r*.32;g.fillStyle=bloom?'#4ab83a':'#7a6a3a';g.beginPath();g.ellipse(px,G0-14,8,bloom?16:8,bloom?0:.6*k,0,TAU);g.fill();if(bloom){circ(px,G0-30,4,['#ff7ae0','#ffe066','#7ae8ff'][(k+3)%3]);}}
+  g.fillStyle='rgba(200,240,255,.18)';g.strokeStyle=OL;g.lineWidth=2.5;g.beginPath();g.ellipse(X,G0-6,r,r*.85,0,Math.PI,TAU);g.closePath();g.fill();g.stroke();g.strokeStyle='rgba(255,255,255,.45)';g.lineWidth=1.2;for(let i=1;i<4;i++){g.beginPath();g.ellipse(X,G0-6,r*i/4,r*.85,0,Math.PI,TAU);g.stroke();}}
+ const sg=5860-cx;if(sg>-150&&sg<W){panel(sg-60,G0-150,120,22,'#5fe36a');txt(m.ldr?'GARDENS: THIRSTY':'GARDENS: NO WATER',sg,G0-139,8,'#e8ffe0');}}
+function marsBack(cx){const G0=GROUND,m=M;
+ for(const sx of[900,1750,2500,3150]){const X=sx-cx*1;if(X<-120||X>W+120)continue;g.fillStyle=OL;g.beginPath();g.moveTo(X-60,G0);g.quadraticCurveTo(X-50,G0-150,X-14,G0-170);g.quadraticCurveTo(X+30,G0-180,X+46,G0-120);g.quadraticCurveTo(X+60,G0-60,X+66,G0);g.fill();g.fillStyle=lg(g,0,G0-180,0,G0,['#c8643a','#8a3a22']);g.beginPath();g.moveTo(X-56,G0);g.quadraticCurveTo(X-46,G0-146,X-14,G0-166);g.quadraticCurveTo(X+26,G0-176,X+42,G0-120);g.quadraticCurveTo(X+56,G0-60,X+62,G0);g.fill();g.fillStyle='rgba(255,200,150,.25)';g.fillRect(X-40,G0-120,60,6);g.fillRect(X-44,G0-70,80,5);}
+ // colony mountain face (3700-5480)
+ const A=3660-cx;if(A<W+40&&A+1900>-40){g.fillStyle=OL;g.beginPath();g.moveTo(A,G0);g.lineTo(A+120,G0-260);g.quadraticCurveTo(A+400,G0-560,A+800,G0-620);g.quadraticCurveTo(A+1300,G0-640,A+1650,G0-380);g.lineTo(A+1860,G0);g.fill();
+  g.fillStyle=lg(g,0,G0-640,0,G0,['#9a4a2a','#6a2a1a','#4a1a12']);g.beginPath();g.moveTo(A+6,G0);g.lineTo(A+124,G0-254);g.quadraticCurveTo(A+402,G0-552,A+800,G0-612);g.quadraticCurveTo(A+1296,G0-632,A+1644,G0-376);g.lineTo(A+1852,G0);g.fill();
+  for(let i=0;i<14;i++){const wx=A+260+(i%7)*170,wy=G0-160-Math.floor(i/7)*150-(i%3)*20;circ(wx,wy,11,OL);circ(wx,wy,8.5,(T*1.5+i|0)%5?'#ffd27a':'#7a4a2a');}
+  const dx=A+1800;g.fillStyle=OL;g.beginPath();g.arc(dx,G0,58,Math.PI,TAU);g.fill();g.fillStyle=m.ldr?'#5fe36a':'#3a1a12';g.beginPath();g.arc(dx,G0,50,Math.PI,TAU);g.fill();g.fillStyle='#ffc53d';for(let k=0;k<5;k++)g.fillRect(dx-48+k*20,G0-6,10,6);
+  panel(A+150,G0-120,130,22,'#ff7a29');txt('MARS COLONY ONE',A+215,G0-109,8,'#ffc53d');}}
+
 function marsify(m){const G0=GROUND;
  // every other ground walker is a hijacked colony robot; flyers stay goofy Vorr Zibbits
  let k=0;for(const f of m.foes)if(!f.type&&(k++%2===0)){f.bot=1;f.hp=3;f.flee=false;}
- m.gates=[[1950,'A'],[4700,'B'],[9900,'C'],[10900,'D'],[12350,'E']];
+ m.gates=[[1600,'A'],[4700,'B'],[9950,'C'],[10850,'D'],[12300,'E']];
  // gem pieces moved to new hiding spots for Mars
- const gp=[[2135,-70],[4290,-250],[8040,-360],[11230,120],[13150,150]];let gi=0;for(const p of m.picks)if(p.k==='gem'){p.gi=gi;[p.x,p.y]=gp[gi];gi++;}
+ const gp=[[1480,-50],[4330,-250],[8100,-360],[10800,30],[12450,90]];let gi=0;for(const p of m.picks)if(p.k==='gem'){p.gi=gi;[p.x,p.y]=gp[gi];gi++;}
  m.tips=[[40,'Mars, Captain. The colony is built right into that mountain. Something down there has gone very quiet.'],[300,'Same moves as the Moon: JUMP to hop, hold it to go higher.'],
   [560,'Those are our colony robots, with Vorr crystals stuck on them! Zap them to set them free. Don\'t worry, they won\'t break.'],[1290,'Zibbits again. Malakar sent his flyers ahead.'],
   [1700,'Checkpoint beacon. The colony built these too.'],[1900,'A sealed door. Free a robot nearby and it might open a shortcut for you.'],[2650,'Moving platforms. Ride them across the canyon.'],
@@ -1206,24 +1233,24 @@ function drawSpace(){const s=sp,p=s.dist/s.len,warp=s.phase==='jump'?1:0;setDims
  if(s.phase==='arrive'){g.globalAlpha=clamp(s.endT/2,0,1);txt(SPM===3?'MARS ARRIVAL':'MOON ARRIVAL',W/2,H/2,26,'#ffffff');g.globalAlpha=1;}
  if(s.cut)bossCut(s);else controls(true);}
 // ---------- MOON ART ----------
-function ridgeSpr(kind){return pre('ridge'+kind,W,kind?150:190,0,0,x=>{const h=kind?150:190,k=TAU/W;
+function ridgeSpr(kind){const MA=M&&M.mars;return pre((MA?'mars':'')+'ridge'+kind,W,kind?150:190,0,0,x=>{const h=kind?150:190,k=TAU/W;
  const f=kind?(X=>30+Math.sin(X*k*3)*10+Math.sin(X*k*7+1)*5+Math.sin(X*k*2+2)*8):(X=>40+Math.sin(X*k*2)*22+Math.sin(X*k*5+1)*10+Math.sin(X*k*9)*4);
  x.beginPath();x.moveTo(0,h);for(let X=0;X<=W;X+=4)x.lineTo(X,f(X));x.lineTo(W,h);x.closePath();
- x.fillStyle=kind?lg(x,0,10,0,h,['#9a9eb8','#6a6e88','#3a3e56']):lg(x,0,10,0,h,['#4a4e6a','#2c2f48','#1c1e34']);x.fill();
- x.strokeStyle=kind?'rgba(230,235,255,.7)':'rgba(170,180,230,.45)';x.lineWidth=2;x.beginPath();for(let X=0;X<=W;X+=4)X?x.lineTo(X,f(X)+1):x.moveTo(X,f(X)+1);x.stroke();
- if(kind){for(let i=0;i<6;i++){const cx=50+i*107,cy=f(cx)+26;E(x,cx,cy,18,5);x.fillStyle='rgba(30,30,50,.45)';x.fill();x.strokeStyle='rgba(230,235,255,.5)';x.lineWidth=1.2;x.beginPath();x.ellipse(cx,cy,18,5,0,.1,Math.PI-.1);x.stroke();}
+ x.fillStyle=MA?(kind?lg(x,0,10,0,h,['#c8643a','#8a3a22','#4a1a12']):lg(x,0,10,0,h,['#7a2a2a','#4a1a1e','#2a0e14'])):kind?lg(x,0,10,0,h,['#9a9eb8','#6a6e88','#3a3e56']):lg(x,0,10,0,h,['#4a4e6a','#2c2f48','#1c1e34']);x.fill();
+ x.strokeStyle=MA?'rgba(255,200,150,.6)':kind?'rgba(230,235,255,.7)':'rgba(170,180,230,.45)';x.lineWidth=2;x.beginPath();for(let X=0;X<=W;X+=4)X?x.lineTo(X,f(X)+1):x.moveTo(X,f(X)+1);x.stroke();
+ if(kind&&!MA){for(let i=0;i<6;i++){const cx=50+i*107,cy=f(cx)+26;E(x,cx,cy,18,5);x.fillStyle='rgba(30,30,50,.45)';x.fill();x.strokeStyle='rgba(230,235,255,.5)';x.lineWidth=1.2;x.beginPath();x.ellipse(cx,cy,18,5,0,.1,Math.PI-.1);x.stroke();}
   const dx=320,dy=f(dx)+6;E(x,dx,dy,20,14);fo(x,ballG(x,dx,dy,20,14,'#d8dce8'),1.4);RR(x,dx-22,dy,44,8,2);fo(x,'#8a8ea4',1.2);E(x,dx,dy-14,2,2);x.fillStyle='#ffc53d';x.fill();RR(x,dx-6,dy-4,12,6,3);x.fillStyle='#45d6ff';x.fill();}});}
-function groundSpr(){return pre('ground',W,64,0,0,x=>{x.fillStyle=lg(x,0,0,0,64,['#d8dbe6','#b0b4c4','#8a8ea2','#6e7288']);x.fillRect(0,0,W,64);
+function groundSpr(){const MA=M&&M.mars;return pre((MA?'mars':'')+'ground',W,64,0,0,x=>{x.fillStyle=lg(x,0,0,0,64,MA?['#d8703e','#b0502c','#8a3a22','#6a2a1a']:['#d8dbe6','#b0b4c4','#8a8ea2','#6e7288']);x.fillRect(0,0,W,64);
  let sd=7;const R=()=>(sd=(sd*9301+49297)%233280)/233280;
- for(let i=0;i<90;i++){const a=R()*W,b=8+R()*54,r=1+R()*3.5;for(const ox of[-W,0,W]){E(x,a+ox,b,r*1.4,r);x.fillStyle='rgba(80,84,104,.55)';x.fill();E(x,a+ox-r*.3,b-r*.3,r*.7,r*.45);x.fillStyle='rgba(240,242,250,.6)';x.fill();}}
+ for(let i=0;i<90;i++){const a=R()*W,b=8+R()*54,r=1+R()*3.5;for(const ox of[-W,0,W]){E(x,a+ox,b,r*1.4,r);x.fillStyle=MA?'rgba(90,30,16,.55)':'rgba(80,84,104,.55)';x.fill();E(x,a+ox-r*.3,b-r*.3,r*.7,r*.45);x.fillStyle=MA?'rgba(255,190,140,.6)':'rgba(240,242,250,.6)';x.fill();}}
  for(let i=0;i<10;i++){const a=R()*W,b=20+R()*36;for(const ox of[-W,0,W]){E(x,a+ox,b,14,4);x.fillStyle='rgba(70,74,94,.45)';x.fill();x.strokeStyle='rgba(240,242,250,.5)';x.lineWidth=1;x.beginPath();x.ellipse(a+ox,b,14,4,0,.2,Math.PI-.2);x.stroke();}}
- x.fillStyle='#f0f2fa';x.fillRect(0,0,W,2.5);x.fillStyle='rgba(60,64,84,.5)';x.fillRect(0,3,W,1.5);});}
-function platSpr(w){return pre('plat'+w,w+4,18,2,2,x=>{RR(x,0,0,w,12,4);fo(x,lg(x,0,0,0,12,['#e0e6ff','#9aa0c4','#5a6088']),1.6);RR(x,3,3,w-6,3,1.5);x.fillStyle='rgba(255,197,61,.9)';x.fill();
+ x.fillStyle=MA?'#ffb080':'#f0f2fa';x.fillRect(0,0,W,2.5);x.fillStyle='rgba(60,64,84,.5)';x.fillRect(0,3,W,1.5);});}
+function platSpr(w){const MA=M&&M.mars;return pre((MA?'mars':'')+'plat'+w,w+4,18,2,2,x=>{RR(x,0,0,w,12,4);fo(x,lg(x,0,0,0,12,MA?['#f0a070','#b05a34','#6a2e1a']:['#e0e6ff','#9aa0c4','#5a6088']),1.6);RR(x,3,3,w-6,3,1.5);x.fillStyle='rgba(255,197,61,.9)';x.fill();
  x.save();RR(x,3,3,w-6,3,1.5);x.clip();x.fillStyle='#2a2f55';for(let i=0;i<w;i+=8){x.beginPath();x.moveTo(i,3);x.lineTo(i+3,3);x.lineTo(i+1,6);x.lineTo(i-2,6);x.fill();}x.restore();
  for(let i=6;i<w-4;i+=Math.max(14,(w-12)/Math.round((w-12)/18))){E(x,i,8.5,1.3,1.3);x.fillStyle='#2a2f55';x.fill();}x.fillStyle='rgba(0,0,0,.25)';RR(x,4,12,w-8,4,2);x.fill();});}
-function rockSprM(w,h){return pre('rockm'+w+'x'+h,w+10,h+8,5,4,x=>{smooth(x,[[0,h],[-2,h*.4],[w*.2,-2],[w*.6,0],[w+2,h*.3],[w+1,h]]);fo(x,ballG(x,w*.45,h*.45,w*.6,h*.6,'#9a9eb0'),1.8);
+function rockSprM(w,h){const MA=M&&M.mars;return pre((MA?'mars':'')+'rockm'+w+'x'+h,w+10,h+8,5,4,x=>{smooth(x,[[0,h],[-2,h*.4],[w*.2,-2],[w*.6,0],[w+2,h*.3],[w+1,h]]);fo(x,ballG(x,w*.45,h*.45,w*.6,h*.6,MA?'#b0583a':'#9a9eb0'),1.8);
  E(x,w*.35,h*.35,w*.14,h*.1);x.fillStyle='rgba(60,64,84,.5)';x.fill();gloss(x,w*.3,h*.15,w*.18,2,.45,0);});}
-function craterSpr(w){return pre('crat'+w,w+6,16,w/2+3,8,x=>{E(x,0,0,w/2,6);x.fillStyle=lg(x,0,-6,0,6,['#5a5e74','#7a7e94']);x.fill();E(x,0,1,w/2-4,3.6);x.fillStyle='rgba(40,42,60,.6)';x.fill();
+function craterSpr(w){const MA=M&&M.mars;return pre((MA?'mars':'')+'crat'+w,w+6,16,w/2+3,8,x=>{E(x,0,0,w/2,6);x.fillStyle=lg(x,0,-6,0,6,MA?['#6a2a1a','#9a4a2a']:['#5a5e74','#7a7e94']);x.fill();E(x,0,1,w/2-4,3.6);x.fillStyle='rgba(40,42,60,.6)';x.fill();
  x.strokeStyle='rgba(245,246,252,.8)';x.lineWidth=1.6;x.beginPath();x.ellipse(0,0,w/2,6,0,.15,Math.PI-.15);x.stroke();});}
 function flagSpr(){return pre('flag',40,70,4,66,x=>{limb(x,0,0,0,-62,2.6,'#e8ecf6');x.beginPath();x.moveTo(1,-61);x.quadraticCurveTo(14,-63,27,-60);x.lineTo(27,-44);x.quadraticCurveTo(14,-47,1,-45);x.closePath();x.fillStyle='#ffffff';x.fill();
  x.save();x.clip();x.fillStyle='#e8344a';for(let i=0;i<4;i++)x.fillRect(0,-60+i*4.4,28,2.2);x.fillStyle='#2f4fb8';x.fillRect(0,-63,11,9);x.restore();x.strokeStyle=OL;x.lineWidth=1.2;x.stroke();});}
@@ -1284,7 +1311,7 @@ function drawMoon(){const m=M,cx=m.cam,cy=m.camY;if(m.mars){g.fillStyle=lg(g,0,0
  for(const q of m.gaps){const x=q[0]-cx,w=q[1]-q[0];if(x>W||x+w<0)continue;g.fillStyle=lg(g,0,GROUND-4,0,GROUND+70,['#1a1d38','#05060f']);g.fillRect(x,GROUND-2,w,80);g.fillStyle='#454a6a';g.fillRect(x-3,GROUND-2,4,70);g.fillRect(x+w-1,GROUND-2,4,70);dglow(x+w/2,GROUND+40,30,'#7a3aff',.25);}
  for(const c of m.craters){const x=c[0]-cx;if(m.gaps.some(q=>c[0]+c[1]>q[0]&&c[0]-c[1]<q[1]))continue;if(x>-120&&x<W+120)dsp(craterSpr(c[1]|0),x,GROUND+14);}
  if(m.boss)dsp(craterSpr(68),m.arena+330-cx,GROUND+12);
- const fx=420-cx;if(fx>-60&&fx<W)dsp(flagSpr(),fx,GROUND);
+ const fx=420-cx;if(!m.mars&&fx>-60&&fx<W)dsp(flagSpr(),fx,GROUND);if(m.mars){const sx2=140-cx;if(sx2>-150&&sx2<W+150){g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(sx2,GROUND+2,70,7,0,0,TAU);g.fill();landerShip(sx2,GROUND-12*1.4-28,1,1,1.4,0,GROUND);}}
  for(const p of m.movers){const x=p.x-cx;if(x>W||x+p.w<0)continue;dsp(platSpr(p.w),x,p.y);dglow(x+p.w/2,p.y+12,14,'#45d6ff',.6);}
  const ax=m.arena-cx;if(ax>-30&&ax<W+30){g.fillStyle=OL;g.beginPath();g.roundRect(ax-10,GROUND-144,20,146,6);g.fill();g.fillStyle=lg(g,ax-8,0,ax+8,0,['#7a80a8','#454a66','#2a2f48']);g.beginPath();g.roundRect(ax-8,GROUND-142,16,142,5);g.fill();
   for(let j=0;j<7;j++){const on=m.lock?((T*6+j|0)%2):1,c2=m.lock?(on?'#ff4f7b':'#801030'):'#45d6ff';circ(ax,GROUND-130+j*19,3.2,c2);if(on)dglow(ax,GROUND-130+j*19,8,c2,.6);}if(m.lock)dglow(ax,GROUND-70,44,'#ff4f7b',.3);}
@@ -1299,7 +1326,7 @@ function drawMoon(){const m=M,cx=m.cam,cy=m.camY;if(m.mars){g.fillStyle=lg(g,0,0
  for(const e of m.eshots){if(e.wave){dglow(e.x-cx,e.y,18,'#ffb040',.85);g.fillStyle=lg(g,0,e.y-6,0,e.y+4,['#fff6c0','#ff9a3a']);g.beginPath();g.ellipse(e.x-cx,e.y-2,20,8,0,0,TAU);g.fill();}else if(e.cr){const X=e.x-cx;dglow(X,e.y,14,'#ff4fd0',.8);g.fillStyle=OL;g.beginPath();g.moveTo(X,e.y-14);g.lineTo(X+7,e.y);g.lineTo(X,e.y+12);g.lineTo(X-7,e.y);g.closePath();g.fill();g.fillStyle=lg(g,0,e.y-12,0,e.y+10,['#ffd0f0','#ff3aa0','#7a1050']);g.beginPath();g.moveTo(X,e.y-11);g.lineTo(X+5,e.y);g.lineTo(X,e.y+9);g.lineTo(X-5,e.y);g.closePath();g.fill();}else if(e.wat){circ(e.x-cx,e.y,7,OL);g.fillStyle=ballG(g,e.x-cx,e.y,5.8,5.8,'#7ae8ff');g.beginPath();g.arc(e.x-cx,e.y,5.8,0,TAU);g.fill();}else orb(e.x-cx,e.y,e.zap?'#ff9a3a':e.big?'#5fe36a':'#ff4f7b',e.big?9:5);}
  if(m.on&&!wasOn)sfx('land'),addFx(m.px,m.py,'dust',1.2),addFx(m.px-8,m.py,'dust',.8);if(m.on&&Math.abs(m.vx)>100&&(T*12|0)%5===0)addFx(m.px-m.face*8,m.py,'dust',.6);wasOn=m.on;
  const hurtNow=m.inv>.8;if(m.inv<=0||hurtNow||(T*12|0)%2)captain(m.px-cx,m.py,CAPS[cap],{face:m.face,run:m.on&&Math.abs(m.vx)>10?m.run:0,air:!m.on,vy:m.vy,shoot:m.shooting>0,t:T,hurt:hurtNow,flash:hurtNow&&(T*20|0)%2});
- debris(m.booms,cx);drawFx(cx);if(m.mars){if(!m.ldr&&5650-cx>-60&&5650-cx<W+60)leaderBot(5650-cx,GROUND,T,true);g.restore();g.save();g.globalCompositeOperation='multiply';g.fillStyle='#ffb08a';g.fillRect(0,0,W,H);g.restore();g.save();}g.restore();darkness(cx,cy);
+ debris(m.booms,cx);drawFx(cx);if(m.mars){if(!m.ldr&&5650-cx>-60&&5650-cx<W+60)leaderBot(5650-cx,GROUND,T,true);g.restore();g.save();g.globalCompositeOperation='multiply';g.fillStyle='#ffe0cc';g.fillRect(0,0,W,H);g.restore();g.save();}g.restore();darkness(cx,cy);
  hud(m.hp,m.maxhp);if(m.tip){panel(150,28,340,46,'#ffc53d');dsp(portrait('hayes'),172,72,.95);wrap('HAYES: '+m.tip.t,332,44,290,9,'#ffffff',13);}if(!m.lock&&!m.tip)txt('M'+m.lv+' · '+(m.lv===4?MSECT4:MSECT).reduce((a,c)=>m.px>=c[0]?c[1]:a,'')+'   ◆ GEMS '+gemN(m.lv)+'/5',W/2,16,10,'#45d6ff');
  m.msgs.slice(-3).forEach((s,i)=>capBox(s.t,W/2,90+i*22));
  if(m.cut)moonCut(m);else controls(false);}
@@ -1350,19 +1377,19 @@ function interior(a,b,top,kind,cx){const G0=GROUND,A=a-cx,B=b-cx;if(B<0||A>W)ret
  g.fillStyle=OL;g.fillRect(A-6,top-16,B-A+12,20);g.fillStyle=lg(g,0,top-14,0,top+2,['#8a90b8','#4a5070']);g.fillRect(A-4,top-14,B-A+8,16);
  for(let x=A+30;x<B;x+=90){const on=((T*2+x/90)|0)%5;g.fillStyle=on?'#b9f6ff':'#405070';g.fillRect(x,top+2,40,4);if(on)dglow(x+20,top+10,26,'#45d6ff',.3);}
  g.fillStyle='#3a4170';g.fillRect(A-14,top-16,14,h+16);}
-function baseBack(cx){const G0=GROUND,m=M;
- for(const[dx,r]of[[3850,74],[4120,52],[5300,60]]){const x=dx-cx;if(x<-r-20||x>W+r+20)continue;
+function baseBack(cx){const G0=GROUND,m=M;if(m.mars)marsBack(cx);
+ if(!m.mars)for(const[dx,r]of[[3850,74],[4120,52],[5300,60]]){const x=dx-cx;if(x<-r-20||x>W+r+20)continue;
   g.fillStyle='#2a2f48';g.fillRect(x-r-6,G0-14,r*2+12,14);g.save();g.beginPath();g.ellipse(x,G0-12,r,r*.8,0,Math.PI,TAU);g.closePath();g.fillStyle=lg(g,0,G0-12-r,0,G0,['rgba(185,246,255,.55)','rgba(60,110,180,.35)','rgba(20,30,70,.6)']);g.fill();g.strokeStyle=OL;g.lineWidth=2.5;g.stroke();g.clip();
   g.strokeStyle='rgba(200,230,255,.35)';g.lineWidth=1.2;for(let i=1;i<5;i++){g.beginPath();g.ellipse(x,G0-12,r*i/5,r*.8,0,Math.PI,TAU);g.stroke();}g.restore();
   const on=(T*3+dx|0)%4;circ(x,G0-12-r*.8,3,on?'#ff4f7b':'#601020');if(on)dglow(x,G0-12-r*.8,10,'#ff4f7b',.6);g.fillStyle='rgba(95,227,106,.7)';g.beginPath();g.ellipse(x-r*.5,G0-14,12,5,0,0,TAU);g.fill();}
- const sx=3720-cx;if(sx>-200&&sx<W){panel(sx,G0-112,116,22,'#ff7a29');txt('TRANQUILITY OUTPOST',sx+58,G0-101,8,'#ffc53d');}
- const[da,db]=m.dark;if(db-cx>0&&da-cx<W){const A=da-cx,B=db-cx;g.fillStyle=lg(g,0,-500,0,G0,['#141020','#221a2a','#2a2230']);g.fillRect(A,-500,B-A,G0+500);
-  g.fillStyle='#0c0a14';g.beginPath();g.moveTo(A,-500);for(let x=0;x<=db-da;x+=40)g.lineTo(A+x,-40+Math.sin((da+x)*.013)*30+((da+x)*7%23));g.lineTo(B,-500);g.fill();
-  for(let x=da+80;x<db;x+=260){const X=x-cx;if(X<-40||X>W+40)continue;for(let k=0;k<3;k++){g.fillStyle='#45d6ff';g.globalAlpha=.8;g.beginPath();g.moveTo(X+k*9,G0-60-k*12);g.lineTo(X+k*9+5,G0-80-k*14);g.lineTo(X+k*9+10,G0-60-k*12);g.fill();g.globalAlpha=1;}dglow(X+10,G0-70,24,'#45d6ff',.4);}
+ const sx=3720-cx;if(!m.mars&&sx>-200&&sx<W){panel(sx,G0-112,116,22,'#ff7a29');txt('TRANQUILITY OUTPOST',sx+58,G0-101,8,'#ffc53d');}
+ const[da,db]=m.dark;if(db-cx>0&&da-cx<W){const A=da-cx,B=db-cx;g.fillStyle=lg(g,0,-500,0,G0,m.mars?['#200a08','#3a1610','#4a2014']:['#141020','#221a2a','#2a2230']);g.fillRect(A,-500,B-A,G0+500);
+  g.fillStyle=m.mars?'#1a0806':'#0c0a14';g.beginPath();g.moveTo(A,-500);for(let x=0;x<=db-da;x+=40)g.lineTo(A+x,-40+Math.sin((da+x)*.013)*30+((da+x)*7%23));g.lineTo(B,-500);g.fill();
+  for(let x=da+80;x<db;x+=260){const X=x-cx;if(X<-40||X>W+40)continue;for(let k=0;k<3;k++){g.fillStyle=m.mars?'#ffb040':'#45d6ff';g.globalAlpha=.8;g.beginPath();g.moveTo(X+k*9,G0-60-k*12);g.lineTo(X+k*9+5,G0-80-k*14);g.lineTo(X+k*9+10,G0-60-k*12);g.fill();g.globalAlpha=1;}dglow(X+10,G0-70,24,'#45d6ff',.4);}
   for(const lx of m.lamps){const X=lx-cx;if(X<-30||X>W+30)continue;g.fillStyle=OL;g.fillRect(X-3,G0-110,6,110);g.fillStyle='#5a6088';g.fillRect(X-1.5,G0-108,3,108);circ(X,G0-114,6,'#fff2c0',OL);dglow(X,G0-114,30,'#ffd27a',.8);}}
- for(const s of INTS)interior(s[0],s[1],s[2],s[3],cx);
- const k=5120-cx;if(k>-50&&k<W+50)txt('KOSMOS CACHE',k+70,-440,9,'#b9f6ff');
- const shx=140-cx;if(shx>-150&&shx<W+150){g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(shx,G0+2,70,7,0,0,TAU);g.fill();landerShip(shx,G0-12*1.4-28,1,1,1.4,0,G0);}
+ for(const s of INTS)interior(s[0],s[1],s[2],s[3],cx);if(m.mars)marsGardens(cx);
+ const k=5120-cx;if(k>-50&&k<W+50)txt(m.mars?'COLONY LOOKOUT':'KOSMOS CACHE',k+70,-440,9,'#b9f6ff');
+ const shx=140-cx;if(shx>-150&&shx<W+150&&!m.mars){g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(shx,G0+2,70,7,0,0,TAU);g.fill();landerShip(shx,G0-12*1.4-28,1,1,1.4,0,G0);}
  for(const c of m.cps){const X=c.x-cx;if(c.x===140||X<-20||X>W+20)continue;g.fillStyle=OL;g.fillRect(X-4,G0-60,8,60);g.fillStyle='#8a90b0';g.fillRect(X-2,G0-58,4,58);const col=c.on?'#5fe36a':'#ff4f7b';circ(X,G0-64,7,col,OL);dglow(X,G0-64,c.on?26:14,col,.7);}}
 function darkness(cx,cy){const m=M,[a,b]=m.dark,k=clamp(Math.min(m.px-a,b-m.px)/160+.2,0,1);if(m.px<a-200||m.px>b+200||k<=0)return;
  if(!window._dk){window._dk=mkc(W,H);}const c=window._dk,x=c.getContext('2d');x.globalCompositeOperation='source-over';x.clearRect(0,0,W,H);x.fillStyle=`rgba(3,3,12,${.9*k})`;x.fillRect(0,0,W,H);x.globalCompositeOperation='destination-out';
@@ -1469,6 +1496,7 @@ const MARSLAND=[
  {d:5,int:3,img:'c10',cap:'Mission Control, Earth.',bub:[{s:'The colony robots stopped answering us. Free them, find the leader, and watch for Vorr.',x:330,y:70,w:270,tx:300,ty:180,at:.4}]},
  {d:5,int:3,cap:'Somewhere in the tunnels...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#1a0a10','#3a1a10']);g.fillRect(0,0,W,H);g.save();g.translate(200,250);g.scale(1.6,1.6);blob(0,0,T,{r:26,face:1,angry:1,col:'#4fd65c'});dsp(domeSpr(),0,0);g.restore();dustWhale(460,220,.7,T,{});},bub:[{s:'BLORP! Big Blorp is back! Dust Whale guard my water, and Malakar give Blorp a NEW robot!',x:40,y:60,w:270,tx:200,ty:180,at:.4}],fx:{s:'BLORP!',x:520,y:80,sz:26,at:.3}}];
 const MARSWIN=[
+ {d:4.5,int:3,cap:'Meanwhile, behind a rock...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#3a1a10','#7a3020']);g.fillRect(0,0,W,H);g.save();g.translate(220+t*60,250);g.scale(1.8,1.8);blob(0,0,T*2,{r:24,face:1,scared:1,col:'#4fd65c'});dsp(domeSpr(),0,0);g.restore();},bub:[{s:'My whale! My water! Big Blorp is NOT having a good week. Run away!',x:330,y:60,w:260,tx:300,ty:200,at:.4}],fx:{s:'SCRAM!',x:520,y:300,sz:26,at:.3}},
  {d:5,int:3,cap:'The Dust Whale lets go...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#3a1a10','#1a0a08']);g.fillRect(0,0,W,H);for(let i=0;i<40;i++){const u=((t*.6+i/40)%1);circ(100+i*12+Math.sin(i)*20,300-u*260,4+i%3,'#7ae8ff');}dustWhale(320,220,.8,T,{});},bub:[{s:'Hic! Okay okay! Take your water back. Glub.',x:380,y:60,w:220,tx:360,ty:170,at:.5}],fx:{s:'SPLOOOSH!',x:180,y:80,sz:30,at:.2}},
  {d:5.5,int:3,cap:'The colony gardens drink it up.',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#ff9a6a','#c0582e']);g.fillRect(0,0,W,H);for(let i=0;i<9;i++){const x=50+i*68,gr=clamp(t*1.4-i*.1,0,1);g.fillStyle='#4a8a3a';g.beginPath();g.ellipse(x,330-gr*20,22*gr+4,30*gr+4,0,Math.PI,TAU);g.fill();if(gr>.6){circ(x,300-gr*30,7,OL);circ(x,300-gr*30,5.5,['#ff7ae0','#ffe066','#7ae8ff'][i%3]);}}leaderBot(320,310,T,false);colonyBot(200,320,T,1,{freed:1});colonyBot(450,320,T+1,-1,{freed:1});},bub:[{s:'Our gardens! They\'re blooming! Thank you, Captain!',x:360,y:60,w:240,tx:330,ty:200,at:.5}],fx:{s:'BLOOM!',x:150,y:80,sz:28,at:.4}},
  {d:5.5,int:3,cap:'A second crystal shard!',draw:t=>{starfield(T*4);dglow(320,180,80+Math.sin(T*3)*8,'#b04aff',.6);g.fillStyle=OL;g.beginPath();g.moveTo(320,100);g.lineTo(360,180);g.lineTo(320,260);g.lineTo(280,180);g.closePath();g.fill();g.fillStyle=lg(g,0,100,0,260,['#f0c0ff','#b04aff','#5a1a8a']);g.beginPath();g.moveTo(320,108);g.lineTo(352,180);g.lineTo(320,252);g.lineTo(288,180);g.closePath();g.fill();},bub:[{s:'Two shards down. Kosmos must have dropped pieces along Voyager\'s path. We\'re catching up!',x:30,y:200,w:240,tx:280,ty:180,at:.5}]},
@@ -1476,6 +1504,7 @@ const MARSWIN=[
  {d:5.5,int:3,cap:'Then, a crackling signal...',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#0a0a20','#1a1040']);g.fillRect(0,0,W,H);starfield(T*4);moonBall(470,120,46);for(let k=0;k<4;k++){const r=((t*.8+k/4)%1)*90;g.strokeStyle=`rgba(255,224,102,${1-r/90})`;g.lineWidth=3;g.beginPath();g.arc(470,120,46+r,0,TAU);g.stroke();}ship(160,230,T,1);},bub:[{s:'...HELP... trapped... Vorr... moon of Mars... WOOF... I mean, over!',x:40,y:50,w:260,tx:420,ty:130,at:.5}],fx:{s:'SOS!',x:470,y:240,sz:28,at:.3}},
  {d:4.5,int:3,cap:'To be continued...',draw:t=>{starfield(T*14);moonBall(420,200,90);ship(220,160+Math.sin(T*2)*6,T,1.2);},bub:[{s:'Did that signal just... bark?',x:40,y:230,w:220,tx:200,ty:180,at:.5}],fx:{s:'NEXT: THE DISTRESS SIGNAL!',x:320,y:70,sz:24,at:.4,rot:-.05}}];
 const MARSARR=[
+ {d:4.5,int:3,cap:'Krool\'s pod tumbles away... with a passenger.',draw:t=>{starfield(T*20);g.save();g.translate(320,190);g.rotate(t*2);kroolPod(0,0,false);g.restore();g.save();g.translate(360,170);g.scale(1.2,1.2);blob(0,0,T,{r:12,face:-1,scared:1,col:'#4fd65c'});g.restore();},bub:[{s:'Krool! Move over! Big Blorp needs a ride to Mars too!',x:40,y:200,w:250,tx:340,ty:170,at:.4}],fx:{s:'BONK!',x:480,y:90,sz:26,at:.3}},
  {d:5,int:3,sting:1,cap:'At last: Mars.',draw:t=>{starfield(T*8);marsBall(420,190,150+t*6);speedLines(320,180,'rgba(255,170,120,.15)');ship(160+t*20,150,T,1.3);},bub:[{s:'There it is. The red planet. And the Vorr got here first.',x:40,y:230,w:250,tx:170,ty:170,at:.5}],fx:{s:'MARS!',x:470,y:90,sz:30,at:.3}},
  {d:5.5,int:3,img:'c07',cap:'On the Vorr flagship...',bub:[{s:'Let the Earthlings come. My army is digging on Mars. The path to Voyager will be MINE.',x:340,y:170,w:260,tx:330,ty:150,at:.6}]},
  {d:5.5,int:3,img:'c10',cap:'Mission Control, Earth.',bub:[{s:'Your next mission: land on Mars and find out what Malakar is digging for.',x:330,y:70,w:270,tx:300,ty:180,at:.4}]},
@@ -1527,6 +1556,7 @@ function drawMissions(){starfield(T*8);txt('SELECT MISSION',W/2,30,20,'#ffc53d')
 function drawCard(){const L=MIS[mission];starfield(T*14);if(mission===1)earth(520,250,90);else if(mission>=3)marsBall(520,250,80);else moonBall(520,250,90);
  const a=clamp(stateT*2,0,1);g.globalAlpha=a;txt('MISSION '+mission,W/2,70,34,'#ffc53d');txt(L.name,W/2,112,24,'#ffffff');txt(L.sub,W/2,140,11,'#45d6ff');g.globalAlpha=1;
  if(stateT<.8)return;const ln=L.brief[bLine],tt=stateT-.8;panel(28,234,94,114,'#ffc53d');dsp(portrait('hayes'),75,342,2.2);panel(132,250,486,90);txt('COMMANDER HAYES',145,264,12,'#ffc53d','left');
+ {const TA=[0,'Run home, Earthlings. Voyager and the crystal will be MINE.','Big Blorp will squash you flat, little captain!','Every fuel station is mine. Enjoy drifting!','Mars belongs to the Vorr now. Turn back!'][mission];if(TA&&IMG.comic_c07){g.save();g.beginPath();g.arc(586,62,34,0,TAU);g.clip();drawCover(IMG.comic_c07,540,20,92,84);g.restore();g.strokeStyle=OL;g.lineWidth=4;g.beginPath();g.arc(586,62,34,0,TAU);g.stroke();g.strokeStyle='#b04aff';g.lineWidth=2;g.stroke();bubble(TA,452,108,170,560,92,true);txt('KING MALAKAR',586,104,7,'#d0a0ff');}}
  const shown=ln.slice(0,Math.floor(tt*45));wrap(shown,375,292,450,12,'#ffffff',19);if((T*3|0)%2)txt('▶',600,326,12,'#45d6ff');
  const tp=tapped();if(tp||pressedA||(AUTO&&tt>1.4)){pressedA=false;if(shown.length<ln.length&&!AUTO)stateT=99;else if(++bLine>=L.brief.length)(mission===4?playComic(MARSLAND,()=>go('moon')):mission===3?playComic(MARSGO,()=>go('space')):go(mission===1?'launchcut':mission===3?'space':'landing'));else stateT=.8;}}
 let launchFx=[];
