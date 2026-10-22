@@ -1100,7 +1100,8 @@ function pilotBust(x,ci){const c=CAPS[ci],sk=c.skin,hr=c.hair,ARM='#8fb8e8';x.sa
  if(c.style==='glasses'){x.strokeStyle='#2a1a10';x.lineWidth=.55;x.beginPath();x.arc(19,-9.2,1.7,0,TAU);x.stroke();}
  x.strokeStyle='#7a3a2a';x.lineWidth=.55;x.beginPath();x.moveTo(18.8,-6.8);x.quadraticCurveTo(19.8,-6.2,20.6,-7);x.stroke();
  x.restore();}
-function shipSpr(){const ci=cap;return pre('ship2_'+ci,104,72,54,36,x=>{const WB='#a9cdf2',W1='#f2f6fb';
+function shipSpr(){const im=IMG.spr_paleblue;if(im&&im.width)return{c:im,w:104,h:70,ax:54,ay:36};return shipSprOld();}
+function shipSprOld(){const ci=cap;return pre('ship2_'+ci,104,72,54,36,x=>{const WB='#a9cdf2',W1='#f2f6fb';
  // wings (behind)
  x.beginPath();x.moveTo(-4,-9);x.quadraticCurveTo(-22,-20,-40,-26);x.quadraticCurveTo(-34,-17,-18,-4);x.closePath();fo(x,lg(x,0,-26,0,-4,['#e8f2ff',WB,'#6a98d0']),1.4);
  x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=1.4;x.beginPath();x.moveTo(-6,-10);x.quadraticCurveTo(-22,-20,-38,-25);x.stroke();
@@ -1131,8 +1132,8 @@ function shipSpr(){const ci=cap;return pre('ship2_'+ci,104,72,54,36,x=>{const WB
  x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=1.4;x.beginPath();x.moveTo(-6,13);x.quadraticCurveTo(-24,24,-40,31);x.stroke();
  x.strokeStyle='rgba(30,40,70,.45)';x.lineWidth=.6;x.beginPath();x.moveTo(-14,13);x.lineTo(-26,25);x.stroke();});}
 function ship(x,y,t,sc=1,flame=1){const s=shipSpr(),f=(1+Math.sin(t*40)*.3)*flame;g.save();g.translate(x,y);g.rotate(Math.sin(t*2)*.04);g.scale(sc,sc);
- for(const o of[-9,11]){dglow(-42-8*f,o,10+7*f,'#3f8cff',.95);g.fillStyle='rgba(200,235,255,.95)';g.beginPath();g.ellipse(-40-4*f,o,4+5*f,2.6,0,0,TAU);g.fill();}
- g.drawImage(s.c,-s.ax,-s.ay,s.w,s.h);const bl=(t*4|0)%2;g.fillStyle=bl?'#ffc53d':'#ff4f7b';g.beginPath();g.arc(-10,-27,1.6,0,TAU);g.fill();if(bl)dglow(-10,-27,6,'#ffc53d',.7);g.restore();}
+ const nw=s.c!==undefined&&s.c===IMG.spr_paleblue;for(const[ox,o]of nw?[[-38,-1],[-6,24]]:[[-42,-9],[-42,11]]){dglow(ox-8*f,o,10+7*f,'#3f8cff',.95);g.fillStyle='rgba(200,235,255,.95)';g.beginPath();g.ellipse(ox+2-4*f,o,4+5*f,2.6,0,0,TAU);g.fill();}
+ g.drawImage(s.c,-s.ax,-s.ay,s.w,s.h);if(!nw){const bl=(t*4|0)%2;g.fillStyle=bl?'#ffc53d':'#ff4f7b';g.beginPath();g.arc(-10,-27,1.6,0,TAU);g.fill();if(bl)dglow(-10,-27,6,'#ffc53d',.7);}g.restore();}
 
 // ---------- captains: armored suit + glass bubble helmet ----------
 const IRIS=['#5a3418','#2f8a4a','#3a2010','#6a5a20'];
@@ -2316,6 +2317,7 @@ function drawFoot(){const c=CT,F=c.foot,B=F.B;const sk=SHAKE>0?[rnd(-1,1)*SHAKE*
 function footBtns(){const b=btns();const draw=(o,label,on)=>{g.globalAlpha=.62;circ(o.x,o.y,o.r+2,OL);g.fillStyle=lg(g,0,o.y-o.r,0,o.y+o.r,on?['#7fe8ff','#2a8ab8']:['#3a4a9a','#141c4a']);g.beginPath();g.arc(o.x,o.y,o.r,0,TAU);g.fill();g.globalAlpha=.92;txt(label,o.x,o.y,o.r*.42,'#ffffff');g.globalAlpha=1;};
  draw(b.left,'◀',held('left'));draw(b.right,'▶',held('right'));draw(b.jump,'JUMP',held('jump'));draw(b.shoot,'FIRE',held('shoot'));}
 // ================= MISSION 7: VESTA PEAK (buggy run; refs: crater-buggy, vorr-buggy, stone-golem, comet) =================
+loadImg('spr_paleblue','assets/sprites/paleblue.png');
 ['buggy','buggy-jump','golem','golem-slam','golem-core','gang','gang-fire','gang-crash','comet-walk'].forEach(k=>loadImg('spr_'+k,'assets/sprites/'+k+'.png'));
 const BX=170,BSEC=[{n:'GROOVE CANYON',a:0},{n:'LAVA TUBES',a:7000},{n:'CRATER CLIMB',a:14000},{n:'THE PEAK',a:20400}],
  BGAPS=[[2900,240],[4700,200],[6300,220],[7800,200],[16400,200],[18300,220]],BMAG=[[9000,10600],[11800,13100]],BEND=20400,BVAULT=13800;
