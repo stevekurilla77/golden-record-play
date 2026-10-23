@@ -231,7 +231,7 @@ function go(s){S=s;stateT=0;GOVER=null;CRY=null;if(PAUSEM){PAUSEM=null;saveVol()
 let NOTAP=false;function tapped(){if(NOTAP)return null;const t=tapQueued;tapQueued=null;return t;}
 // ---------- TITLE ----------
 // ---------- INTRO ----------
-const LINES=[{who:'MISSION CONTROL',t:'ALERT! A strange signal, and the Crystal Keys are glowing. Vorr ships detected!'},
+const LINES=[{who:'MISSION CONTROL',t:'ALERT! Dr. Vega\'s star map is glowing. Vorr ships detected!'},
  {who:'MISSION CONTROL',t:'The Moon outpost has gone dark. Blob minions everywhere.'},
  {who:'COMMANDER HAYES',t:'We have one ship left, and a crew of four captains.'}];
 let line=0;
@@ -1818,18 +1818,11 @@ const JUPWIN=[
  {d:4,int:3,cap:'',draw:t=>drawStarMap(9,t),bub:[{s:'Follow the path... to Voyager!',who:'@',x:40,y:230,w:240,tx:200,ty:180,at:.5}]},
  {img:'c76',d:4.5,int:2,sting:1,cap:'Not far away...',bub:[{s:'ACHOO! ...I mean, I heard nothing. Racing there now!',who:'ACE KREEL',x:40,y:230,w:250,tx:200,ty:180,at:.5}],fx:{s:'ACHOO!',x:450,y:60,sz:30,at:.3}}];
 const OPENING=[
- {img:'o01',d:5,int:0,cap:'A quiet night at Mission Control.',bub:[{s:'Nothing ever happens on the night shift.',who:'HAYES',x:40,y:230,w:240,tx:200,ty:180,at:.8}],fx:{s:'SLURRRP',x:470,y:80,sz:22,at:2.4}},
- {img:'o02',d:5,int:1,cap:'Then...',bub:[{s:'Uh, Hayes? The Keys are GLOWING.',who:'@',x:40,y:230,w:240,tx:200,ty:180,at:1}],fx:{s:'HUMMMM!',x:470,y:80,sz:24,at:.3,c1:'#bfe8ff',c2:'#8a3aff'}},
- {img:'o03',d:4.5,int:1,cap:'A signal. From very, VERY far away.',fx:{s:'BLIP... BLIP...',x:440,y:80,sz:22,at:.4}},
- {img:'o04',d:5,int:2,cap:'',bub:[{s:'The Heart Crystal is out there. Follow the path.',who:'SIGNAL',x:40,y:230,w:250,tx:200,ty:180,at:.6}]},
- {img:'o05',d:5,int:2,cap:'Dr. Vega\'s old star map!',bub:[{s:'She said it would only light up when the Keys did.',who:'HAYES',x:40,y:230,w:250,tx:200,ty:180,at:.6}]},
- {img:'o06',d:5,int:2,cap:'The path is there. The end is not.',bub:[{s:'Who rips the end off a treasure map?!',who:'@',x:40,y:230,w:240,tx:200,ty:180,at:.8}],fx:{s:'RIIIP!',x:480,y:80,sz:28,at:.3}},
- {img:'o07',d:4.5,int:3,warn:1,cap:'',bub:[{s:'Knock knock, Earthlings!',who:'ACE KREEL',x:40,y:230,w:220,tx:200,ty:180,at:.6}],fx:{s:'KRASSH!',x:470,y:80,sz:32,at:.2}},
- {img:'o08',d:4.5,int:3,cap:'ACE KREEL, Malakar\'s deadliest pilot.',bub:[{s:'One Key for me. Thanks for the night light!',who:'ACE KREEL',x:40,y:230,w:250,tx:200,ty:180,at:.6}],fx:{s:'SNATCH!',x:470,y:80,sz:26,at:.3}},
- {img:'c07',d:5,int:3,sting:1,cap:'VORR KING MALAKAR',bub:[{s:'Find the Heart Crystal before they do, Kreel. Or else.',who:'MALAKAR',x:40,y:230,w:250,tx:200,ty:180,at:.6}]},
- {img:'o10',d:4.5,int:3,cap:'',bub:[{s:'Easy! It\'s probably under a big rock. On the Moon!',who:'ACE KREEL',x:40,y:230,w:250,tx:200,ty:180,at:.5}],fx:{s:'FWOOSH!',x:470,y:80,sz:28,at:.3}},
- {img:'c10',d:4.5,int:3,cap:'Mission Control.',bub:[{s:'Each Vorr boss carries a Crystal Key. Get them back!',who:'HAYES',x:40,y:230,w:250,tx:200,ty:180,at:.5}]},
- {img:'o11',d:4.5,int:3,cap:'',bub:[{s:'Hayes, warm up Pale Blue!',who:'@',x:40,y:230,w:220,tx:200,ty:180,at:.4},{s:'Bring back our Key, Captain!',who:'HAYES',x:340,y:230,w:220,tx:400,ty:180,at:2}]},
+ {img:'o05',d:5,int:0,cap:'A quiet night at Mission Control. Then Dr. Vega\'s old star map starts to GLOW!',bub:[{s:'Huh. Maps aren\'t supposed to do that.',who:'HAYES',x:40,y:230,w:240,tx:200,ty:180,at:1}],fx:{s:'HUMMMM!',x:470,y:80,sz:24,at:.4,c1:'#bfe8ff',c2:'#8a3aff'}},
+ {img:'o06',d:5,int:1,cap:'The path to the Heart Crystal, the most powerful crystal in the galaxy!',bub:[{s:'Who rips the end off a treasure map?!',who:'@',x:40,y:230,w:240,tx:200,ty:180,at:1}],fx:{s:'RIIIP!',x:480,y:80,sz:28,at:.3}},
+ {img:'o07',d:4.5,int:3,warn:1,cap:'ACE KREEL, Malakar\'s cockiest pilot!',bub:[{s:'That crystal\'s MINE!',who:'ACE KREEL',x:40,y:230,w:220,tx:200,ty:180,at:.6}],fx:{s:'KRASSH!',x:470,y:80,sz:32,at:.2}},
+ {img:'c64',d:6,int:3,sting:1,cap:'VORR KING MALAKAR',bub:[{s:'Find the Heart Crystal before they do, Kreel.',who:'MALAKAR',x:40,y:230,w:250,tx:200,ty:180,at:.5},{s:'Easy. It\'s under a big rock. On the Moon!',who:'ACE KREEL',x:340,y:230,w:250,tx:400,ty:180,at:2.6}]},
+ {img:'o11',d:4.5,int:3,cap:'',bub:[{s:'Hayes, warm up Pale Blue!',who:'@',x:40,y:230,w:220,tx:200,ty:180,at:.4},{s:'Go get that crystal, Captain!',who:'HAYES',x:340,y:230,w:220,tx:400,ty:180,at:2}]},
  {img:'o12',d:4.5,int:3,sting:1,cap:'The race for the Heart Crystal begins!',fx:{s:'KA-BOOOOM!',x:460,y:80,sz:32,at:.3}}];
 
 const COMIC=[
@@ -1881,7 +1874,7 @@ function chunk(str,n){const sen=str.match(/[^.!?]+[.!?]+['"]?\s*|[^.!?]+$/g)||[s
 function playComic(beats,onEnd){beats=splitB(beats);CB=beats;CEND=onEnd;comicI=0;comicT=0;go('comic');}
 function endComic(){if(CEND){const f=CEND;CEND=null;CB=splitB(COMIC);f();return;}seenComic=true;try{localStorage.setItem('gr_comic','1');}catch(e){}go('select');}
 function comicArt(){const tag=(arr,p)=>arr.forEach((b,i)=>{b.img=b.img||p+String(i+1).padStart(2,'0');});tag(COMIC,'c');tag(INTER1,'i1_');tag(MOONWIN,'mw_');tag(MARSARR,'ma_');tag(MARSLAND,'ml_');tag(MARSGO,'mg_');tag(MARSWIN,'mx_');
- fetch('assets/comic/manifest.json').then(r=>r.ok?r.json():[]).then(l=>{for(const f of l||[]){const m=String(f).match(/^(.+)\.(png|jpe?g)$/i);if(m)loadImg('comic_'+m[1],'assets/comic/'+f+'?v=b33c');}}).catch(()=>{});}
+ fetch('assets/comic/manifest.json').then(r=>r.ok?r.json():[]).then(l=>{for(const f of l||[]){const m=String(f).match(/^(.+)\.(png|jpe?g)$/i);if(m)loadImg('comic_'+m[1],'assets/comic/'+f+'?v=b34');}}).catch(()=>{});}
 
 const WHO=[['It holds the power','DR. VEGA'],['Go far','DR. VEGA'],['Nothing gets','ACE KREEL'],['This isn','ACE KREEL'],['Setting her down','@'],['You win THIS','BIG BLORP'],['Two Keys safe','@'],['Faster! Blorp','BIG BLORP'],['There\'s the colony','@'],['Big Blorp is back','BIG BLORP'],['My whale','BIG BLORP'],['Okay, okay','DUST WHALE'],['The water is back','PIP-7'],['DECODED: HELP','CODED SIGNAL'],['Someone\'s locked','@'],['Krool! Move','BIG BLORP'],['There it is','@'],['Hop in','@'],['BEEP. I am Comet','COMET'],['The prisoner is','@']];
 function whoOf(q,b){if(q.who)return q.who==='@'?CAPS[cap].name:q.who;const s=q.s||'';for(const[k,n]of WHO)if(s.startsWith(k))return n==='@'?CAPS[cap].name:n;if(b&&b.img==='c10')return 'HAYES';if(b&&b.img==='c07')return 'MALAKAR';return CAPS[cap].name;}
