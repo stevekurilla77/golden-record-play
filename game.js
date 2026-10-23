@@ -80,10 +80,20 @@ const THEMES={
  moonboss:{style:'spook',boss:1,bpm:138,root:44,sc:'phr',prog:[0,1,0,6],drone:0,tex:'ghost',lead:[0,_,7,_,8,_,7,_,_,_,4,_,3,_,1,_,0,_,7,_,8,_,10,_,_,_,8,_,7,_,_,_]},
  mars:{style:'spook',bpm:130,root:46,sc:'min',prog:[0,5,6,4],drone:7,tex:'wind',lead:[0,_,_,_,6,_,_,_,_,_,5,_,_,_,_,_,3,_,_,_,_,_,2,_,_,_,_,_,0,_,_,_]},
  jupiter:{style:'spook',bpm:122,root:41,sc:'dor',prog:[0,3,0,6],drone:0,tex:'storm',lead:[4,_,_,_,_,_,_,_,5,_,_,_,9,_,_,_,_,_,_,_,7,_,_,_,6,_,_,_,_,_,_,_]},
+ space3:{style:'hero',bpm:134,root:52,sc:'lyd',prog:[0,1,5,4],mod:[0,0,3,3],lw:'square',bw:'sawtooth',arp:1,lead:[4,_,_,_,6,_,7,_,_,_,11,_,_,_,9,_,7,_,_,_,6,_,4,_,2,_,_,_,4,_,_,_]},
+ space6:{style:'hero',bpm:156,root:49,sc:'dor',prog:[0,3,6,4],mod:[0,3,0,5],lw:'triangle',bw:'sawtooth',four:1,arp:1,lead:[0,_,2,_,3,_,_,_,4,_,3,_,2,_,0,_,6,_,_,_,4,_,_,_,3,_,4,_,7,_,_,_]},
+ boss3:{style:'hero',boss:1,bpm:172,root:50,sc:'phr',prog:[0,1,0,5],mod:[0,1,3,1],lw:'square',bw:'sawtooth',lead:[0,_,1,_,0,_,4,_,3,_,1,_,0,_,_,_,7,_,8,_,7,_,4,_,3,_,1,_,0,_,_,_]},
+ boss6:{style:'hero',boss:1,bpm:150,root:41,sc:'min',prog:[0,5,3,6],mod:[0,2,0,5],lw:'triangle',four:1,arp:1,lead:[7,_,_,6,7,_,9,_,_,_,7,_,6,_,4,_,3,_,_,4,6,_,_,_,4,_,3,_,2,_,_,_]},
+ marsboss:{style:'spook',boss:1,bpm:146,root:46,sc:'min',prog:[0,5,6,5],drone:0,tex:'wind',lw:'square',lead:[0,_,3,_,4,_,3,_,7,_,_,_,6,_,4,_,0,_,3,_,4,_,6,_,7,_,8,_,7,_,_,_]},
+ volkboss:{style:'hero',boss:1,bpm:164,root:40,sc:'phr',prog:[0,1,6,1],mod:[0,0,1,3],bw:'sawtooth',four:1,lead:[0,0,_,1,_,0,_,_,7,_,6,_,4,_,1,_,0,0,_,1,_,3,_,_,4,_,6,_,7,_,_,_]},
+ vesta:{style:'spook',bpm:118,root:48,sc:'lyd',prog:[0,1,4,5],drone:4,tex:'storm',lw:'triangle',arp:1,lead:[4,_,_,_,_,_,6,_,_,_,7,_,_,_,_,_,11,_,_,_,9,_,_,_,7,_,_,_,6,_,_,_]},
+ vestaboss:{style:'hero',boss:1,bpm:154,root:43,sc:'dor',prog:[0,6,3,4],mod:[0,2,5,2],lw:'square',bw:'sawtooth',arp:1,lead:[0,_,4,_,7,_,_,9,_,7,_,4,3,_,_,_,0,_,4,_,7,_,10,_,_,9,_,7,4,_,_,_]},
  asteroid:{style:'spook',bpm:132,root:43,sc:'min',prog:[0,6,5,6],drone:0,tex:'ghost',lead:[0,_,_,_,3,_,_,_,_,_,7,_,_,_,6,_,_,_,_,_,3,_,_,_,_,_,_,_,_,_,_,_]}};
 const MUS={intensity:0};
 function brass(f,t,d,v,D){tone(f,t,d,'sawtooth',v,null,D);tone(f*1.006,t,d,'sawtooth',v*.8,null,D);tone(f/2,t,d,'triangle',v*1.4,null,D);}
-function startMusic(kind,v=0){if(kind==='game')kind=S==='moon'?(mission===4?'mars':'moon'):'space';if(kind==='boss'&&S==='moon'&&mission!==4)kind='moonboss';wantTheme=[kind,v];if(!AC)return;if(music&&curTheme===kind+v)return;stopMusic();curTheme=kind+v;wantTheme=[kind,v];
+function startMusic(kind,v=0){if(kind==='game')kind=S==='moon'?(mission===4?'mars':'moon'):'space';if(kind==='boss'&&S==='moon'&&mission!==4)kind='moonboss';
+ if(kind==='boss'&&S==='moon'&&mission===4)kind='marsboss';if(kind==='space'&&(mission===3||mission===6))kind='space'+mission;if(kind==='boss'&&S==='space'&&(mission===3||mission===6))kind='boss'+mission;
+ if(kind==='boss'&&S==='cart')kind=mission===7?'vestaboss':'volkboss';if(kind==='asteroid'&&mission===7)kind='vesta';wantTheme=[kind,v];if(!AC)return;if(music&&curTheme===kind+v)return;stopMusic();curTheme=kind+v;wantTheme=[kind,v];
  const th=THEMES[kind]||THEMES.space,sc=SC[th.sc],base=th.root+(th.style==='hero'&&!th.cine?[0,2,5,3][v%4]:0),spd=60/(th.bpm+(th.style==='hero'?v*4:0))/4;let step=0,next=AC.currentTime+.06;
  const deg=d=>sc[((d%7)+7)%7]+12*Math.floor(d/7),lead=v&&th.alt?th.alt[(v-1)%th.alt.length]:th.lead;
  music=setInterval(()=>{if(!AC||AC.state!=='running')return;while(next<AC.currentTime+.25){const D=musG,lvl=th.cine?Math.max(1,MUS.intensity):3,t=next;
@@ -93,12 +103,13 @@ function startMusic(kind,v=0){if(kind==='game')kind=S==='moon'?(mission===4?'mar
    if(s16===0)[0,2,4].forEach(k=>tone(mf(root+12+deg(c+k)),t,spd*16,'triangle',.03,null,D));
    if(lvl>=2&&(s16===0||s16===6||(th.boss&&s16===10)||(b8===7&&s16===12)))[0,2,4,7].forEach(k=>tone(mf(root+12+deg(c+k)),t,spd*1.6,'sawtooth',.022,null,D));
    // punchy bass ostinato on 8ths
-   if(lvl>=1&&s16%2===0){const o=[0,0,12,0,7,0,12,10][(s16>>1)];tone(mf(root-12+deg(c)+o),t,spd*1.5,'square',.05,null,D);tone(mf(root-24+deg(c)),t,spd*1.6,'triangle',.12,null,D);}
+   if(lvl>=1&&s16%2===0){const o=[0,0,12,0,7,0,12,10][(s16>>1)];tone(mf(root-12+deg(c)+o),t,spd*1.5,th.bw||'square',th.bw?.035:.05,null,D);tone(mf(root-24+deg(c)),t,spd*1.6,'triangle',.12,null,D);}
    // heroic brass lead (only on its notes; cine scenes bring it in as intensity rises)
-   if(L!==null&&lvl>=2&&!(th.fan&&bar%4===3))brass(mf(root+24+deg(L)),t,spd*2.4,.022,D);
+   if(L!==null&&lvl>=2&&!(th.fan&&bar%4===3)){if(th.lw){tone(mf(root+24+deg(L)),t,spd*2.2,th.lw,th.lw==='triangle'?.06:.024,null,D);tone(mf(root+12+deg(L)),t,spd*2.2,'sawtooth',.012,null,D);}else brass(mf(root+24+deg(L)),t,spd*2.4,.022,D);}
+   if(th.arp&&lvl>=2)tone(mf(root+24+deg(c+[0,2,4,2,7,4][step%6])),t,spd*.7,th.style==='hero'?'square':'triangle',.012,null,D);
    if(v>=2&&step%2===1&&lvl>=3)tone(mf(root+36+deg(c+[0,2,4,7][(step>>1)%4])),t,spd*.9,'square',.01,null,D);
    // drums: kick/snare backbeat, 16th hats, tom fill on bar 4, snare roll build-up before each key change
-   const k=s16===0||s16===8||(th.boss&&(s16===3||s16===11))||(s16===10&&bar%2);if(k)tone(110,t,.16,'sine',lvl>=1?.3:.2,38,D);
+   const k=th.four?s16%4===0:s16===0||s16===8||(th.boss&&(s16===3||s16===11))||(s16===10&&bar%2);if(k)tone(110,t,.16,'sine',lvl>=1?.3:.2,38,D);
    if(lvl>=2&&(s16===4||s16===12)){noise(t,.14,.13,'bandpass',1900,null,D);tone(190,t,.08,'triangle',.08,120,D);}
    if(lvl>=3)noise(t,.025,s16%4===2?.035:.02,'highpass',8500,null,D);
    if(lvl>=2&&bar%4===3&&s16>=12)tone([220,180,150,120][s16-12],t,.14,'sine',.16,70,D);
@@ -111,7 +122,8 @@ function startMusic(kind,v=0){if(kind==='game')kind=S==='moon'?(mission===4?'mar
    // muted driving bass ostinato on 8ths (never a slow pulse)
    if(s16%2===0){const o=[0,0,12,0,1,0,12,7][(s16>>1)];tone(mf(root-12+deg(c)+o),t,spd*.9,'triangle',.11,null,D);}
    // sparse echoing lead: note + two quieter dotted-8th repeats
-   if(L!==null)for(let e=0;e<3;e++)tone(mf(root+24+deg(L)),t+e*spd*3,spd*2.5,'sine',.045/(1+e*1.6),null,D);
+   if(L!==null)for(let e=0;e<3;e++)tone(mf(root+24+deg(L)),t+e*spd*3,spd*2.5,th.lw||'sine',(th.lw==='square'?.02:.045)/(1+e*1.6),null,D);
+   if(th.arp&&s16%2===1)tone(mf(root+12+deg(c+[0,2,4,6][(step>>1)%4])),t,spd*1.2,'triangle',.018,null,D);
    // tight hats / toms / light kick
    noise(t,.018,s16%4===2?.022:.012,'highpass',9000,null,D);
    if(s16===0||s16===10||(th.boss&&(s16===6||s16===13)))tone(95,t,.13,'sine',.2,40,D);
@@ -2497,6 +2509,6 @@ const DRAWK6={
  disg:f=>{if(!f.pop){dsp(rockSpr(19,2,false),f.x,f.y,1.35,1,f.age*.6,f.hit>0);return;}sprI('disguise-pop',f.x,f.y-6,62,f.hit>0)||circ(f.x,f.y,20,'#888',OL);if(f.tell>0)txt('!',f.x,f.y-40,18,'#ff3a4a');}};
 Object.assign(DRAWK,DRAWK6);
 
-window.GR={ct:()=>CT,m:()=>M,wave:p=>spawnWave(p),raw:n=>({COMIC,INTER1,MOONWIN,MARSGO,MARSLAND,MARSWIN,MARSARR,COMETWIN,PHOBOSLAND,BELTGO,VESTAARR,PRISONARR,VESTALAND,GOLEMCUT,PEAKWIN})[n],bug:k=>{mission=7;CT=k!=null?{retry:k}:null;go('cart');},who:(q,b)=>whoOf(q,b),get C(){return CT},cart:k=>{mission=5;CT=k!=null?{retry:k}:null;go('cart');},boss:t=>spawnBoss(t),pc:(n,i)=>{playComic({COMIC,INTER1,MOONWIN,MARSGO,MARSLAND,MARSWIN,MARSARR,COMETWIN,PHOBOSLAND,BELTGO,VESTAARR,PRISONARR,VESTALAND,GOLEMCUT,PEAKWIN}[n],()=>{});comicI=i||0;},beats:n=>splitB({COMIC,INTER1,MOONWIN,MARSGO,MARSLAND,MARSWIN,MARSARR,COMETWIN,PHOBOSLAND,BELTGO,VESTAARR,PRISONARR,VESTALAND,GOLEMCUT,PEAKWIN}[n]).length,shard:l=>shardMoment(l,()=>{}),openPause:()=>openPause(),comicJump:i=>{comicI=i;comicT=0;},get SHM(){return SHM},get SHARDS(){return SHARDS},startMission:n=>startMission(n),play:a=>playComic(a==='MOONWIN'?MOONWIN:INTER1,()=>go('victory')),mz:moonZone,get pm(){return !!PAUSEM},get GEMS(){return GEMS},get CRY(){return CRY},state:S,go,get M(){return M},get sp(){return sp},setCap:i=>cap=i,get comicI(){return comicI},VK,unlocked,get t(){return stateT},flashSaved:()=>{SAVET=1.8;},setGO:()=>{GOVER=()=>{};GOT=1;}};
+window.GR={mus:()=>wantTheme&&wantTheme.join(":"),ct:()=>CT,m:()=>M,wave:p=>spawnWave(p),raw:n=>({COMIC,INTER1,MOONWIN,MARSGO,MARSLAND,MARSWIN,MARSARR,COMETWIN,PHOBOSLAND,BELTGO,VESTAARR,PRISONARR,VESTALAND,GOLEMCUT,PEAKWIN})[n],bug:k=>{mission=7;CT=k!=null?{retry:k}:null;go('cart');},who:(q,b)=>whoOf(q,b),get C(){return CT},cart:k=>{mission=5;CT=k!=null?{retry:k}:null;go('cart');},boss:t=>spawnBoss(t),pc:(n,i)=>{playComic({COMIC,INTER1,MOONWIN,MARSGO,MARSLAND,MARSWIN,MARSARR,COMETWIN,PHOBOSLAND,BELTGO,VESTAARR,PRISONARR,VESTALAND,GOLEMCUT,PEAKWIN}[n],()=>{});comicI=i||0;},beats:n=>splitB({COMIC,INTER1,MOONWIN,MARSGO,MARSLAND,MARSWIN,MARSARR,COMETWIN,PHOBOSLAND,BELTGO,VESTAARR,PRISONARR,VESTALAND,GOLEMCUT,PEAKWIN}[n]).length,shard:l=>shardMoment(l,()=>{}),openPause:()=>openPause(),comicJump:i=>{comicI=i;comicT=0;},get SHM(){return SHM},get SHARDS(){return SHARDS},startMission:n=>startMission(n),play:a=>playComic(a==='MOONWIN'?MOONWIN:INTER1,()=>go('victory')),mz:moonZone,get pm(){return !!PAUSEM},get GEMS(){return GEMS},get CRY(){return CRY},state:S,go,get M(){return M},get sp(){return sp},setCap:i=>cap=i,get comicI(){return comicI},VK,unlocked,get t(){return stateT},flashSaved:()=>{SAVET=1.8;},setGO:()=>{GOVER=()=>{};GOT=1;}};
 comicArt();go('title');requestAnimationFrame(frame);
 })();
