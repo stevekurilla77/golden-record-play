@@ -1808,7 +1808,7 @@ function mapBeats(n){const r=MAPROW[n];if(!r)return[];return[{d:4,int:2,draw:t=>
  {img:'c08',d:3.6,int:2,cap:n===9?'Hiding in a nearby cloud...':'Meanwhile, in Kreel\'s cockpit...',bub:[{s:r[2],who:'ACE KREEL',x:40,y:230,w:240,tx:200,ty:180,at:.4}]}];}
 const JUPGO=[
  {img:'c71',d:4.5,int:3,cap:'Jupiter! Clouds as big as continents.',bub:[{s:'Hayes, these clouds look solid enough to walk on.',who:'@',x:40,y:230,w:240,tx:200,ty:180,at:.5},{s:'Then walk. Carefully, Captain!',who:'HAYES',x:340,y:230,w:220,tx:400,ty:180,at:2.2}],fx:{s:'WHOOSH!',x:470,y:60,sz:28,at:.3}},
- {img:'c72',d:4.5,int:3,sting:1,cap:'Over the giant red storm, something grumbles.',bub:[{s:'WHO DARES HOP ON MY CLOUDS?!',who:'STORM KING',x:40,y:230,w:250,tx:200,ty:180,at:.5}],fx:{s:'KRAKA-BOOM!',x:440,y:60,sz:28,at:.3}},
+ {img:'c72',d:4.5,int:3,sting:1,cap:'Over the giant red storm, something grumbles.',bub:[{s:'WHO DARES HOP ON MY CLOUDS?!',who:'STORM KING',x:40,y:230,w:250,tx:200,ty:180,at:.5}],fx:{s:'KRAKA-BOOM!',x:470,y:192,sz:28,at:.3}},
  {img:'c77',d:4.5,int:3,cap:'Far ahead: a sky city. And a Vorr balloon fortress.',bub:[{s:'BEEP! Kreel\'s goons are already there.',who:'COMET',x:40,y:230,w:240,tx:200,ty:180,at:.5}]}];
 const JUPWIN=[
  {img:'c73',d:4.5,int:2,cap:'Deep in the clouds...',bub:[{s:'Hmm? Visitors! Nobody visits. Except that one shiny fellow.',who:'CLOUD WIZARD',x:40,y:230,w:250,tx:200,ty:180,at:.5}]},
@@ -1881,7 +1881,7 @@ function chunk(str,n){const sen=str.match(/[^.!?]+[.!?]+['"]?\s*|[^.!?]+$/g)||[s
 function playComic(beats,onEnd){beats=splitB(beats);CB=beats;CEND=onEnd;comicI=0;comicT=0;go('comic');}
 function endComic(){if(CEND){const f=CEND;CEND=null;CB=splitB(COMIC);f();return;}seenComic=true;try{localStorage.setItem('gr_comic','1');}catch(e){}go('select');}
 function comicArt(){const tag=(arr,p)=>arr.forEach((b,i)=>{b.img=b.img||p+String(i+1).padStart(2,'0');});tag(COMIC,'c');tag(INTER1,'i1_');tag(MOONWIN,'mw_');tag(MARSARR,'ma_');tag(MARSLAND,'ml_');tag(MARSGO,'mg_');tag(MARSWIN,'mx_');
- fetch('assets/comic/manifest.json').then(r=>r.ok?r.json():[]).then(l=>{for(const f of l||[]){const m=String(f).match(/^(.+)\.(png|jpe?g)$/i);if(m)loadImg('comic_'+m[1],'assets/comic/'+f);}}).catch(()=>{});}
+ fetch('assets/comic/manifest.json').then(r=>r.ok?r.json():[]).then(l=>{for(const f of l||[]){const m=String(f).match(/^(.+)\.(png|jpe?g)$/i);if(m)loadImg('comic_'+m[1],'assets/comic/'+f+'?v=b33c');}}).catch(()=>{});}
 
 const WHO=[['It holds the power','DR. VEGA'],['Go far','DR. VEGA'],['Nothing gets','ACE KREEL'],['This isn','ACE KREEL'],['Setting her down','@'],['You win THIS','BIG BLORP'],['Two Keys safe','@'],['Faster! Blorp','BIG BLORP'],['There\'s the colony','@'],['Big Blorp is back','BIG BLORP'],['My whale','BIG BLORP'],['Okay, okay','DUST WHALE'],['The water is back','PIP-7'],['DECODED: HELP','CODED SIGNAL'],['Someone\'s locked','@'],['Krool! Move','BIG BLORP'],['There it is','@'],['Hop in','@'],['BEEP. I am Comet','COMET'],['The prisoner is','@']];
 function whoOf(q,b){if(q.who)return q.who==='@'?CAPS[cap].name:q.who;const s=q.s||'';for(const[k,n]of WHO)if(s.startsWith(k))return n==='@'?CAPS[cap].name:n;if(b&&b.img==='c10')return 'HAYES';if(b&&b.img==='c07')return 'MALAKAR';return CAPS[cap].name;}
