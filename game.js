@@ -823,6 +823,9 @@ function colonyBot(x,y,t,face,o){g.save();g.translate(x,y);g.scale(face,1);const
  else{circ(0,-72,3.4,OL);circ(0,-72,2.4,'#5fe36a');g.strokeStyle=OL;g.lineWidth=2;g.beginPath();g.moveTo(0,-70);g.lineTo(0,-68);g.stroke();}
  g.restore();}
 function leaderBot(x,y,t,trapped){g.save();g.translate(x,y);
+ const PI7=IMG.spr_pip7;if(PI7){const h=88,w=h*PI7.width/PI7.height,b=Math.sin(t*2.2)*1.5;g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.ellipse(0,0,w*.38,5,0,0,TAU);g.fill();g.drawImage(PI7,-w/2,-h+b,w,h);
+  if(trapped){g.strokeStyle=OL;g.lineWidth=6;for(let i=-2;i<=2;i++){g.beginPath();g.moveTo(i*20,2);g.lineTo(i*13,-92);g.stroke();}g.strokeStyle='#c46aff';g.lineWidth=3;for(let i=-2;i<=2;i++){g.beginPath();g.moveTo(i*20,2);g.lineTo(i*13,-92);g.stroke();}}
+  g.restore();return;}
  if(trapped){dglow(0,-50,50,'#b04aff',.3);g.strokeStyle='#b04aff';g.lineWidth=3;for(let i=-2;i<=2;i++){g.beginPath();g.moveTo(i*16,0);g.lineTo(i*10,-100);g.stroke();}}
  g.fillStyle=OL;g.beginPath();g.ellipse(0,-30,26,30,0,0,TAU);g.fill();g.fillStyle=lg(g,0,-60,0,0,['#fff6d8','#d8b060']);g.beginPath();g.ellipse(0,-30,23,27,0,0,TAU);g.fill();
  circ(0,-30,8,OL);circ(0,-30,6,'#5fe36a');
@@ -2121,10 +2124,10 @@ function drawPuzzle(){const P=CT.puz;const im=IMG.comic_c54;if(im)drawCover(im,0
 // ---- art ----
 function cartArt(x,y,duck,flash,rot){g.save();g.translate(x,y);if(rot)g.rotate(rot);
  captain(0,duck?-4:-22,CAPS[cap],{sc:.78,t:T,shoot:(I.F||held('shoot'))&&(T*8|0)%2,flash});
- if(COMET&&!duck){g.save();g.translate(-17,-30);cometMini(0,0,.8);g.restore();}
  g.fillStyle=OL;g.beginPath();g.moveTo(-30,-30);g.lineTo(30,-30);g.lineTo(24,0);g.lineTo(-24,0);g.closePath();g.fill();
  g.fillStyle=flash?'#ffffff':lg(g,0,-28,0,0,['#c87840','#8a4a20','#5a2a10']);g.beginPath();g.moveTo(-27,-27);g.lineTo(27,-27);g.lineTo(21.5,-2.5);g.lineTo(-21.5,-2.5);g.closePath();g.fill();
  g.fillStyle='rgba(255,220,160,.35)';g.fillRect(-26,-27,52,4);for(const rx of[-18,0,18])circ(rx,-15,2,'#ffe0a0');g.strokeStyle=OL;g.lineWidth=2;g.beginPath();g.moveTo(-24,-14);g.lineTo(24,-14);g.stroke();
+ if(COMET){g.save();g.translate(-15,duck?-31:-35);cometMini(0,0,.8);g.restore();}// Comet rides up front, always visible over the rim
  for(const wx of[-15,15]){circ(wx,2,8,OL);circ(wx,2,6,'#6a7090');const a=T*20;g.strokeStyle='#c0c8e0';g.lineWidth=1.5;g.beginPath();g.moveTo(wx+Math.cos(a)*5,2+Math.sin(a)*5);g.lineTo(wx-Math.cos(a)*5,2-Math.sin(a)*5);g.stroke();circ(wx,2,2,'#c0c8e0');}
  g.restore();}
 function cometMini(x,y,sc){g.save();g.translate(x,y);g.scale(sc,sc);// dachshund head in a glass bubble + harness with a stubby antenna pack (ref: assets/ref/comet.jpg)
@@ -2343,7 +2346,7 @@ function drawFoot(){const c=CT,F=c.foot,B=F.B;const sk=SHAKE>0?[rnd(-1,1)*SHAKE*
 function footBtns(){const b=btns();const draw=(o,label,on)=>{g.globalAlpha=.62;circ(o.x,o.y,o.r+2,OL);g.fillStyle=lg(g,0,o.y-o.r,0,o.y+o.r,on?['#7fe8ff','#2a8ab8']:['#3a4a9a','#141c4a']);g.beginPath();g.arc(o.x,o.y,o.r,0,TAU);g.fill();g.globalAlpha=.92;txt(label,o.x,o.y,o.r*.42,'#ffffff');g.globalAlpha=1;};
  draw(b.left,'◀',held('left'));draw(b.right,'▶',held('right'));draw(b.jump,'JUMP',held('jump'));draw(b.shoot,'FIRE',held('shoot'));}
 // ================= MISSION 7: VESTA PEAK v3. Low-gravity climb on foot: jump, double-jump, jetpack, grapple. Comet trots alongside. Refs: captain sheets, comet-m7, stone-golem =================
-['golem','golem-slam','golem-core','comet-walk','dustwhale','comet-body','v7bat','v7mite','v7drone'].forEach(k=>loadImg('spr_'+k,'assets/sprites/'+k+'.png'));
+['golem','golem-slam','golem-core','comet-walk','dustwhale','comet-body','pip7','v7bat','v7mite','v7drone'].forEach(k=>loadImg('spr_'+k,'assets/sprites/'+k+'.png'));
 [['v7far','v7-far'],['v7cave','v7-cave'],['v7gorge','v7-gorge'],['v7summit','v7-summit'],['v7rock','v7-rock']].forEach(([k,f])=>loadImg('bg_'+k,'assets/bg/'+f+'.jpg'));
 const VW=880,VG=760,VJ=-540,VDJ=-470,VJET=1.0,VFY=-4600;
 const VSEC=[{n:'CRATER WALL',y:0},{n:'CRYSTAL CAVERN',y:-1400},{n:'GRAPPLE GORGE',y:-3300},{n:'VESTA PEAK',y:VFY}];
@@ -2452,10 +2455,20 @@ function vDog(dt){const c=CT,d=c.dog;d.bark-=dt;const tx=c.boss?Math.max((VW-W)/
  if(!d.air){const sp=Math.abs(dx)>160?330:Math.abs(dx)>20?240:0;d.vx=sp?Math.sign(dx)*sp:0;if(d.vx)d.face=Math.sign(d.vx);else d.face=Math.sign(c.px-d.x)||1;d.x+=d.vx*dt;d.ph+=Math.abs(d.vx)*dt*.055;
   const g0=d.g;if(g0){d.y=g0.y;d.x+=g0.dx||0;if(g0.down||d.x<g0.x-4||d.x>g0.x+g0.w+4){d.air=1;d.vy=0;}}
   const hero=c.ground&&!c.air?c.ground:null;
-  if(!d.air&&hero&&hero!==d.g&&(c.py<d.y-20||Math.abs(c.px-d.x)>40)){const h=Math.max(30,d.y-hero.y+40),vy=-Math.sqrt(2*VG*h),tt=(-vy+Math.sqrt(Math.max(0,vy*vy-2*VG*(hero.y-d.y))))/VG,lx=clamp(c.px-c.face*30,hero.x+10,hero.x+hero.w-10);d.air=1;d.vy=vy;d.vx=(lx-d.x)/Math.max(.3,tt);d.face=Math.sign(d.vx)||d.face;d.tgt=hero;}}
- else{const oy=d.y;d.vy+=VG*dt;d.y+=d.vy*dt;d.x+=d.vx*dt;if(d.vy>0)for(const q of c.P){if(q.down||q.k==='gate'&&c.ecs<3)continue;if(d.x>q.x-4&&d.x<q.x+q.w+4&&oy<=q.y+2&&d.y>=q.y){d.y=q.y;d.vy=0;d.air=0;d.g=q;d.vx=0;break;}}}
- if(Math.abs(d.x-c.px)>420||d.y>c.py+380||(d.air&&d.y>c.safe.y+500)){d.x=c.px-c.face*60;d.y=c.py-140;d.vy=0;d.vx=0;d.air=1;vP(d.x,d.y,10,['#ffd27a','#fff'],100,.5);}
+  if(!d.air&&(hero&&hero!==d.g&&(c.py<d.y-20||Math.abs(c.px-d.x)>40)||c.air&&c.py<d.y-70)){d.air=1;d.vx=0;d.vy=-120;d.g=null;}}
+ else{// jetpack hover: Comet flies after the hero and never falls
+  const hg=c.ground&&!c.air?c.ground:null,lx=hg?clamp(tx,hg.x+10,hg.x+hg.w-10):tx,ty=hg?hg.y:c.py-26+Math.sin(T*4)*4;
+  const ex=lx-d.x,ey=ty-d.y,dist=Math.hypot(ex,ey),mx=Math.min(560,60+dist*4.5),k=Math.min(1,dt*7);
+  d.vx+=((dist>1?ex/dist*mx:0)-d.vx)*k;d.vy+=((dist>1?ey/dist*mx:0)-d.vy)*k;d.x+=d.vx*dt;d.y+=d.vy*dt;if(Math.abs(d.vx)>8)d.face=Math.sign(d.vx);
+  d.pf=(d.pf||0)-dt;if(d.pf<=0){d.pf=.07;vP(d.x-(d.face||1)*4,d.y-14,1,['#9fe8ff','#ffffff'],40,.35);}
+  if(hg&&Math.abs(ex)<18&&Math.abs(ey)<14){d.y=hg.y;d.x=lx;d.air=0;d.g=hg;d.vx=0;d.vy=0;}}
+ if(Math.hypot(d.x-c.px,d.y-c.py)>1100){d.x=c.px-c.face*60;d.y=c.py-60;d.vy=0;d.vx=0;d.air=1;}// failsafe only (respawn handled in vRespawn)
  d.x=clamp(d.x,14,VW-14);}
+function dogPack(d,t,bob){// small rounded doggy jetpack on Comet's back; puffs only while airborne
+ const y=-27+bob;if(d.air){for(let k=0;k<3;k++){const ph=(t*6+k/3)%1;g.globalAlpha=(1-ph)*.85;circ(-3,y+10+ph*14,3.5+ph*4,k%2?'#ffffff':'#9fe8ff');}g.globalAlpha=1;dglow(-3,y+10,12,'#7ad8ff',.5);}
+ g.fillStyle=OL;g.beginPath();g.roundRect(-11,y-8,16,15,6);g.fill();g.fillStyle=lg(g,0,y-7,0,y+6,['#ffb347','#e06a10']);g.beginPath();g.roundRect(-9.5,y-6.5,13,12,5);g.fill();
+ g.fillStyle='rgba(255,255,255,.45)';g.beginPath();g.roundRect(-8,y-5.5,5,3,1.5);g.fill();circ(-3,y+7,3,OL);circ(-3,y+7,2,d.air?'#bff4ff':'#5a6a8a');
+ g.strokeStyle=OL;g.lineWidth=2;g.beginPath();g.moveTo(-10,y+1);g.lineTo(-16,y+4);g.moveTo(4,y+1);g.lineTo(10,y+4);g.stroke();}
 function drawDog(d,t){const im=IMG.spr_comet_body||IMG['spr_comet-body'];const s=.105,f=d.face||1;g.save();g.translate(d.x,d.y);g.scale(f*1,1);
  const run=!d.air&&Math.abs(d.vx)>5,ph=d.ph*TAU,bob=run?Math.abs(Math.sin(ph))*-2.5:Math.sin(t*3)*.6;
  const legs=[[88,0],[142,Math.PI],[252,Math.PI],[346,0]];// diagonal trot pairs
@@ -2467,6 +2480,7 @@ function drawDog(d,t){const im=IMG.spr_comet_body||IMG['spr_comet-body'];const s
  // tail wag
  const wag=Math.sin(t*(run?16:9))*(run?.35:.55),tx0=(84-227)*s,ty0=(-300+200)*s-6+bob;g.strokeStyle=OL;g.lineWidth=5;g.beginPath();g.moveTo(tx0+4,ty0+2);g.quadraticCurveTo(tx0-8,ty0-2+Math.sin(wag)*4,tx0-12,ty0-14+wag*10);g.stroke();g.strokeStyle='#a84e10';g.lineWidth=3;g.beginPath();g.moveTo(tx0+4,ty0+2);g.quadraticCurveTo(tx0-8,ty0-2+Math.sin(wag)*4,tx0-12,ty0-14+wag*10);g.stroke();
  if(im){const w=im.width*s,h=im.height*s;g.drawImage(im,-227*s,-h+(300-262)*s*-0-6+bob-(62*s)+6,w,h);}else{g.fillStyle='#a84e10';g.beginPath();g.ellipse(0,-14,22,9,0,0,TAU);g.fill();}
+ dogPack(d,t,bob);
  g.restore();if(d.bark>0)txt('WOOF!',d.x+f*18,d.y-48,10,'#ffe066');}
 // test bot: drives ONLY the virtual buttons (VK.L/R/J/F); the real physics does the rest
 function vRoute(c){const P=c.P,pi=i=>({t:'p',q:P[i]}),it=i=>({t:'i',it:c.I[i]}),an=i=>({t:'a',a:c.A[i]});
