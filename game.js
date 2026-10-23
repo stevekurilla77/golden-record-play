@@ -238,7 +238,8 @@ let line=0;
 // ---------- SELECT ----------
 let selK=false;function launch(){sfx('pick');window.GR.captain=CAPS[cap].name;mSel=1;go('missions');}
 let unlocked=1,mission=1,mSel=1,mDone=1,bLine=0;try{unlocked=Math.max(1,+localStorage.getItem('gr_unlocked')||1);}catch(e){}
-function saveUnlock(n){unlocked=Math.max(unlocked,n);try{localStorage.setItem('gr_unlocked',unlocked);}catch(e){}window.GR&&(window.GR.unlocked=unlocked);}
+const TESTU=Q.get('unlock')==='1'&&!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())&&!/^(capacitor|ionic|file):/.test(location.protocol);const UNL=()=>TESTU?99:unlocked;
+function saveUnlock(n){if(TESTU)return;unlocked=Math.max(unlocked,n);try{localStorage.setItem('gr_unlocked',unlocked);}catch(e){}window.GR&&(window.GR.unlocked=unlocked);}
 let LIVES=3,SAVET=0,GOVER=null,GOT=0,PEND=null,CONF=false;
 // ---- gem pieces: 5 per level, saved forever (survive New Game); all 5 = crystal = permanent upgrade ----
 let GEMS={1:[0,0,0,0,0],2:[0,0,0,0,0],3:[0,0,0,0,0],4:[0,0,0,0,0],6:[0,0,0,0,0],7:[0,0,0,0,0],8:[0,0,0,0,0],9:[0,0,0,0,0]},CRY=null;try{const o=JSON.parse(localStorage.getItem('gr_gems')||'null');if(o)GEMS={1:o[1]||GEMS[1],2:o[2]||GEMS[2],3:o[3]||GEMS[3],4:o[4]||GEMS[4],6:o[6]||GEMS[6],7:o[7]||GEMS[7],8:o[8]||GEMS[8],9:o[9]||GEMS[9]};}catch(e){}
@@ -308,7 +309,7 @@ function loadSave(){try{return JSON.parse(localStorage.getItem('gr_save')||'null
 function writeSave(o,quiet){const old=loadSave()||{};const sv={...old,...o,cap,unlocked,score,lives:LIVES,v:1,at:Date.now()};try{localStorage.setItem('gr_save',JSON.stringify(sv));localStorage.setItem('gr_unlocked',unlocked);}catch(e){}if(!quiet)SAVET=1.8;}
 function saveCP(m,k){writeSave({cp:{m,k},next:m});}
 function loseLife(rs){if(AUTO){rs();return;}LIVES--;if(LIVES>0){rs();}else{GOVER=rs;GOT=0;sfx('stinger');}}
-function newGame(){try{localStorage.removeItem('gr_save');localStorage.setItem('gr_unlocked','1');}catch(e){}unlocked=1;score=0;LIVES=3;CONF=false;if(seenComic)go('select');else{comicFrom='title';go('comic');}}
+function newGame(){try{localStorage.removeItem('gr_save');localStorage.setItem('gr_unlocked','1');}catch(e){}unlocked=1;score=0;LIVES=3;CONF=false;if(seenComic&&!TESTU)go('select');else{comicFrom='title';go('comic');}}
 function resumeSave(sv){cap=sv.cap??0;unlocked=Math.max(unlocked,sv.unlocked||1);score=sv.score||0;LIVES=sv.lives>0?sv.lives:3;
  if(sv.cp&&sv.cp.m){mission=sv.cp.m;PEND=sv.cp;go(sv.cp.m===5||sv.cp.m===7?'cart':sv.cp.m===2||sv.cp.m===4?'moon':'space');}else{mSel=Math.min(8,sv.next||unlocked);go('missions');}}
 function applyCP(c){if(c.m===9&&SK){skRespawn(c.k||0);return;}if((c.m===1||c.m===3||c.m===6||c.m===8)&&sp){const s=sp,k=Math.min(STG[2].a,c.k||0);s.cp=k;s.dist=k;s.bossI=STG.filter(st=>st.b<k).length;s.ha=HEAD[s.bossI].a;s.hr=HEAD[s.bossI].r;setDims(s.bossI);s.x=120;s.y=SH/2;s.waves.forEach(w=>{w.go=w.d<k?1:0;});s.msgs.push({t:'RESUMED AT CHECKPOINT',l:2.5});}
@@ -1935,11 +1936,11 @@ function misArt(n,x,y,w,h){g.save();g.beginPath();g.roundRect(x,y,w,h,6);g.clip(
  if(n===5&&COMET)cometMini(x+w-16,y+h-16,.9);g.restore();g.strokeStyle=OL;g.lineWidth=2;g.beginPath();g.roundRect(x,y,w,h,6);g.stroke();}
 function padlock(x,y,sc){g.save();g.translate(x,y);g.scale(sc,sc);g.strokeStyle=OL;g.lineWidth=7;g.beginPath();g.arc(0,-8,9,Math.PI,0);g.lineTo(9,0);g.moveTo(-9,0);g.lineTo(-9,-8);g.stroke();g.strokeStyle='#c8ccd8';g.lineWidth=3.5;g.stroke();
  g.fillStyle=OL;g.beginPath();g.roundRect(-15,-3,30,24,4);g.fill();g.fillStyle='#ffc53d';g.beginPath();g.roundRect(-12.5,-.5,25,19,3);g.fill();circ(0,7,3,OL);g.fillStyle=OL;g.fillRect(-1.3,7,2.6,7);g.restore();}
-function drawMissions(){starfield(T*8);txt('SELECT MISSION',24,20,17,'#ffc53d','left');audioBtns();
+function drawMissions(){starfield(T*8);txt('SELECT MISSION',24,20,17,'#ffc53d','left');if(TESTU)txt('TEST UNLOCK',24,40,8,'#ff9af0','left');audioBtns();
  const pgOf=n=>CHAP.findIndex(c=>c.m.includes(n));if(mPgK!==mSel){mPage=Math.max(0,pgOf(mSel));mPgK=mSel;}
  const C=CHAP[mPage],CW=128,GAP=14,X0=(W-(CW*4+GAP*3))/2,Y0=66,CH=208;
  txt(C.n+' · '+C.t,W/2,48,12,'#45d6ff');
- C.m.forEach((n,i)=>{const x=X0+(i+(4-C.m.length)/2)*(CW+GAP),lock=n>unlocked,sel=mSel===n&&!lock,side=n===5,acc=lock?'#2a3060':sel?'#45d6ff':side?'#ff9a3a':'#3a4180';
+ C.m.forEach((n,i)=>{const x=X0+(i+(4-C.m.length)/2)*(CW+GAP),lock=n>UNL(),sel=mSel===n&&!lock,side=n===5,acc=lock?'#2a3060':sel?'#45d6ff':side?'#ff9a3a':'#3a4180';
   if(sel)dglow(x+CW/2,Y0+CH/2,90,'#45d6ff',.14);panel(x,Y0,CW,CH,acc);
   txt(side?'SIDE QUEST':'MISSION '+n,x+CW/2,Y0+16,12,lock?'#6a70a0':side?'#ffb060':'#ffc53d');
   misArt(n,x+8,Y0+28,CW-16,96);
@@ -1954,10 +1955,10 @@ function drawMissions(){starfield(T*8);txt('SELECT MISSION',24,20,17,'#ffc53d','
  arrow(X0-18,-1,mPage>0);arrow(X0+CW*4+GAP*3+18,1,mPage<np-1);
  for(let i=0;i<np;i++){const dx=W/2+(i-(np-1)/2)*18;circ(dx,286,i===mPage?5:3.5,i===mPage?'#ffc53d':'#4a5090',OL);}
  txt(showTouch?'TAP A MISSION TO START':'◀ ▶ TO CHOOSE · ENTER TO START',W/2,304,10,'#c6cbef');txt('CAPTAIN '+CAPS[cap].name,W/2,324,11,'#45d6ff');
- if(K.ArrowLeft&&!misK&&mSel>1)mSel--,sfx('blip');if(K.ArrowRight&&!misK&&unlocked>mSel&&mSel<NMIS)mSel++,sfx('blip');misK=K.ArrowLeft||K.ArrowRight;
+ if(K.ArrowLeft&&!misK&&mSel>1)mSel--,sfx('blip');if(K.ArrowRight&&!misK&&UNL()>mSel&&mSel<NMIS)mSel++,sfx('blip');misK=K.ArrowLeft||K.ArrowRight;
  panel(14,300,112,30,'#ff7a29');txt('▶ WATCH INTRO',70,315,9,'#ffffff');const tp=tapped();if(tp&&audioTap(tp))return;if(tp&&tp.x<130&&tp.y>295){comicFrom='missions';go('comic');return;}
  if(tp&&Math.abs(tp.y-ay)<30){if(tp.x<X0-2&&mPage>0){mPage--;mPgK=mSel;sfx('blip');return;}if(tp.x>X0+CW*4+GAP*3+2&&mPage<np-1){mPage++;mPgK=mSel;sfx('blip');return;}}
- if(tp&&tp.y>Y0&&tp.y<Y0+CH){for(let i=0;i<C.m.length;i++){const x=X0+(i+(4-C.m.length)/2)*(CW+GAP);if(tp.x>=x&&tp.x<=x+CW){const n=C.m[i];if(n<=unlocked){if(mSel===n||showTouch)return startMission(n);mSel=n;mPgK=n;}}}}
+ if(tp&&tp.y>Y0&&tp.y<Y0+CH){for(let i=0;i<C.m.length;i++){const x=X0+(i+(4-C.m.length)/2)*(CW+GAP);if(tp.x>=x&&tp.x<=x+CW){const n=C.m[i];if(n<=UNL()){if(mSel===n||showTouch)return startMission(n);mSel=n;mPgK=n;}}}}
  if(((K.Enter||K.Space)&&stateT>.4)||(AUTO&&stateT>1))startMission(mSel);}
 function drawCard(){const L=MIS[mission];starfield(T*14);if(mission===1)earth(520,250,90);else if(mission>=8)jupBall(520,250,90);else if(mission>=6)vestaBall(520,250,80);else if(mission>=3)marsBall(520,250,80);else moonBall(520,250,90);
  const a=clamp(stateT*2,0,1);g.globalAlpha=a;txt('MISSION '+mission,W/2,70,34,'#ffc53d');txt(L.name,W/2,112,24,'#ffffff');txt(L.sub,W/2,140,11,'#45d6ff');g.globalAlpha=1;if(COMET&&COMHINT[mission]&&stateT>.6){panel(40,170,404,44,'#ff9a3a');cometMini(66,202,1.2);fitTxt('COMET: '+COMHINT[mission],258,192,12,350,'#ffffff');}
