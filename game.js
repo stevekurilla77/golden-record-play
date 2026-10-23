@@ -4,10 +4,15 @@
 const W=640,H=360,cv=document.getElementById('c');let g=cv.getContext('2d');
 const Q=new URLSearchParams(location.search),AUTO=Q.has('auto');
 let scale=1,isPad=false;
-function resize(){const w=innerWidth,h=innerHeight;scale=Math.min(w/W,h/H);const dpr=Math.min(devicePixelRatio||1,2);
- cv.width=Math.round(W*scale*dpr);cv.height=Math.round(H*scale*dpr);cv.style.width=W*scale+'px';cv.style.height=H*scale+'px';
- cv.style.left=(w-W*scale)/2+'px';cv.style.top=(h-H*scale)/2+'px';isPad=Math.min(w,h)>=700;}
-addEventListener('resize',resize);resize();
+let _vk='';function vpDims(){const vv=window.visualViewport,de=document.documentElement;let w=vv&&vv.width>0?vv.width:(de.clientWidth||innerWidth),h=vv&&vv.height>0?vv.height:(de.clientHeight||innerHeight);
+ if(innerWidth>0)w=Math.min(w,innerWidth);if(innerHeight>0)h=Math.min(h,innerHeight);return{w:Math.max(1,w),h:Math.max(1,h),x:vv?vv.offsetLeft||0:0,y:vv?vv.offsetTop||0:0};}
+function resize(){const d=vpDims(),w=d.w,h=d.h,key=[w,h,d.x,d.y,devicePixelRatio].join(',');if(key===_vk)return;_vk=key;scale=Math.min(w/W,h/H);const dpr=Math.min(devicePixelRatio||1,2);
+ cv.width=Math.round(W*scale*dpr);cv.height=Math.round(H*scale*dpr);cv.style.position='fixed';cv.style.width=W*scale+'px';cv.style.height=H*scale+'px';
+ cv.style.left=(d.x+(w-W*scale)/2)+'px';cv.style.top=(d.y+(h-H*scale)/2)+'px';isPad=Math.min(w,h)>=700;if(typeof g!=='undefined'&&g&&g.setTransform)g.setTransform(1,0,0,1,0,0);}
+const _rs=()=>{_vk='';resize();setTimeout(()=>{_vk='';resize();},120);setTimeout(()=>{_vk='';resize();},500);};
+addEventListener('resize',_rs);addEventListener('orientationchange',_rs);addEventListener('pageshow',_rs);addEventListener('load',_rs);
+if(window.visualViewport){visualViewport.addEventListener('resize',_rs);visualViewport.addEventListener('scroll',_rs);}
+document.addEventListener('DOMContentLoaded',_rs);setInterval(resize,400);resize();
 // ---------- audio: original procedural score + SFX (Web Audio) ----------
 let AC=null,master=null,musG=null,sfxG=null,NOISE=null,music=null,curTheme=null,wantTheme=null;
 const VOL={mus:1,sfx:1};try{const v=JSON.parse(localStorage.getItem('gr_vol')||'{}');if(v.mus!=null)VOL.mus=v.mus;if(v.sfx!=null)VOL.sfx=v.sfx;}catch(e){}
