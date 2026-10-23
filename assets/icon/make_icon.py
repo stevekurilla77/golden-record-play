@@ -72,7 +72,9 @@ def add_pilot(shipI):
     hlI=Image.fromarray((hl*235).astype('uint8')).filter(ImageFilter.GaussianBlur(1))
     wh=Image.new('RGBA',(W0,H0),(240,250,255,0));wh.putalpha(hlI);out.alpha_composite(wh)
     return out
-shipI=add_pilot(shipI)
+# pilot is painted into the source art now (build 26)
+# # pilot is painted into the source art now (build 26)
+# shipI=add_pilot(shipI)
 
 rng=np.random.default_rng(7)
 def scene(S,icon):
@@ -117,5 +119,5 @@ def compose(S,icon):
     y,x=np.mgrid[0:S,0:S]/S;v=1-.5*np.clip(((x-.5)**2+(y-.5)**2)*2.2-.15,0,1)
     arr=np.asarray(im.convert('RGB')).astype(float)*v[...,None]
     return Image.fromarray(arr.clip(0,255).astype('uint8'))
-ic=compose(1024,True);ic.save('assets/icon/AppIcon-1024.png')
+# app icon is separate art; not regenerated
 sp=compose(2732,False);sp.save('assets/icon/splash-2732.png')
