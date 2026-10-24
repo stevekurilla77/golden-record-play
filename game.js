@@ -1818,12 +1818,12 @@ const JUPWIN=[
  {d:4,int:3,cap:'',draw:t=>drawStarMap(9,t),bub:[{s:'Follow the path... to Voyager!',who:'@',x:40,y:230,w:240,tx:200,ty:180,at:.5}]},
  {img:'c76',d:4.5,int:2,sting:1,cap:'Not far away...',bub:[{s:'ACHOO! ...I mean, I heard nothing. Racing there now!',who:'ACE KREEL',x:40,y:230,w:250,tx:200,ty:180,at:.5}],fx:{s:'ACHOO!',x:450,y:60,sz:30,at:.3}}];
 const OPENING=[
- {img:'o05',d:5,int:0,cap:'A quiet night at Mission Control. Then Dr. Vega\'s old star map starts to GLOW!',bub:[{s:'Huh. Maps aren\'t supposed to do that.',who:'HAYES',x:40,y:230,w:240,tx:200,ty:180,at:1}],fx:{s:'HUMMMM!',x:470,y:80,sz:24,at:.4,c1:'#bfe8ff',c2:'#8a3aff'}},
+ {img:'o05',d:5,int:0,cap:'Dr. Vega\'s star map starts to GLOW!',bub:[{s:'Huh. Maps aren\'t supposed to do that.',who:'HAYES',x:40,y:230,w:240,tx:200,ty:180,at:1}],fx:{s:'HUMMMM!',x:470,y:80,sz:24,at:.4,c1:'#bfe8ff',c2:'#8a3aff'}},
  {img:'o06',d:5,int:1,cap:'The path to the Heart Crystal, the most powerful crystal in the galaxy!',bub:[{s:'Who rips the end off a treasure map?!',who:'@',x:40,y:230,w:240,tx:200,ty:180,at:1}],fx:{s:'RIIIP!',x:480,y:80,sz:28,at:.3}},
- {img:'o07',d:4.5,int:3,warn:1,cap:'ACE KREEL, Malakar\'s cockiest pilot!',bub:[{s:'That crystal\'s MINE!',who:'ACE KREEL',x:40,y:230,w:220,tx:200,ty:180,at:.6}],fx:{s:'KRASSH!',x:470,y:80,sz:32,at:.2}},
- {img:'c64',d:6,int:3,sting:1,cap:'VORR KING MALAKAR',bub:[{s:'Find the Heart Crystal before they do, Kreel.',who:'MALAKAR',x:40,y:230,w:250,tx:200,ty:180,at:.5},{s:'Easy. It\'s under a big rock. On the Moon!',who:'ACE KREEL',x:340,y:230,w:250,tx:400,ty:180,at:2.6}]},
+ {img:'o07',d:4.5,int:3,warn:1,cap:'ACE KREEL, Malakar\'s fastest pilot!',bub:[{s:'That crystal\'s MINE!',who:'ACE KREEL',x:40,y:230,w:220,tx:200,ty:180,at:.6}],fx:{s:'KRASSH!',x:470,y:80,sz:32,at:.2}},
+ {img:'c64',d:4.5,int:3,sting:1,cap:'VORR KING MALAKAR',bub:[{s:'Find the Heart Crystal before they do, Kreel.',who:'MALAKAR',x:40,y:230,w:250,tx:200,ty:180,at:.5}]},
  {img:'o11',d:4.5,int:3,cap:'',bub:[{s:'Hayes, warm up Pale Blue!',who:'@',x:40,y:230,w:220,tx:200,ty:180,at:.4},{s:'Go get that crystal, Captain!',who:'HAYES',x:340,y:230,w:220,tx:400,ty:180,at:2}]},
- {img:'o12',d:4.5,int:3,sting:1,cap:'The race for the Heart Crystal begins!',fx:{s:'KA-BOOOOM!',x:460,y:80,sz:32,at:.3}}];
+ {img:'o12',d:5.5,int:3,sting:1,cap:'The race for the Heart Crystal begins!',bub:[{s:'Easy. It\'s under a big rock. On the Moon!',who:'ACE KREEL',x:40,y:230,w:250,tx:200,ty:180,at:1.4,radio:1}],fx:{s:'KA-BOOOOM!',x:460,y:80,sz:32,at:.3}}];
 
 const COMIC=[
  ...OPENING,
@@ -1831,7 +1831,7 @@ const COMIC=[
   const sx=Math.max(0,1-t/.35)*-300;capCard(i,60+sx,30,240,300);g.fillStyle=OL;g.fillRect(330,110,270,46);g.fillStyle='#ffe066';g.fillRect(333,113,264,40);txt(CAPS[i].name,465,133,17,'#ffffff');cText(CAPS[i].bio,340,166,14,'#ffffff',250,20);txt('CAPTAIN '+(i+1)+' OF 4',465,90,9,'#ffffff');}})),
  {d:4.5,int:3,sting:1,img:'c15',cap:'Choose who flies Pale Blue.',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#ff9a5a','#5a4a9a','#1a1a4a']);g.fillRect(0,0,W,H);g.fillStyle='#2a2a3a';g.fillRect(0,270,W,90);g.fillStyle=OL;g.fillRect(420,110,26,160);g.strokeStyle='#d04020';g.lineWidth=2;g.strokeRect(422,112,22,156);
   g.save();g.translate(330,190);g.rotate(-Math.PI/2);ship(0,0,0,2.4,0);g.restore();},fx:{s:'GO TIME!',x:180,y:120,sz:28,at:1.2}}];
-function comicGo(i){if(!CB)CB=splitB(COMIC);comicI=i;comicT=0;const b=CB[i];if(!b)return;MUS.intensity=b.int;if(b.warn)sfx('warn');if(b.sting)sfx('stinger');if(b.capI!==undefined)capHit(b.capI);sfx('whoosh');if((b.bub||[]).some(q=>q.who==='COMET'||q.who==='CODED SIGNAL'||q.who==='SIGNAL'))for(let k=0;k<3;k++)setTimeout(()=>sfx('blip'),550+k*130);}
+function comicGo(i){if(!CB)CB=splitB(COMIC);comicI=i;comicT=0;const b=CB[i];if(!b)return;MUS.intensity=b.int;if(b.warn)sfx('warn');if(b.sting)sfx('stinger');if(b.capI!==undefined)capHit(b.capI);sfx('whoosh');if((b.bub||[]).some(q=>q.who==='COMET'||q.who==='CODED SIGNAL'||q.who==='SIGNAL'||q.radio))for(let k=0;k<3;k++)setTimeout(()=>sfx('blip'),550+k*130);}
 let CB=null,CEND=null;const INTER1=[
  {img:'c16',d:3.6,int:2,cap:'Kreel\'s fighter limps away into the dark...',draw:t=>{starfield(T*30);moonBall(470,170,150);speedLines(200,170,'rgba(255,120,160,.12)');dsp(vorrSpr(),200-t*30,140-t*12,2.4-t*.3,1,-.3);dglow(160-t*30,150,20,'#ff7a29',.8);},bub:[{s:'This isn\'t over, Earthling! Malakar will hear of this!',x:300,y:40,w:250,tx:230,ty:120,at:.5,shout:1}],fx:{s:'FWOOSH!',x:120,y:250,sz:26,at:.3}},
  {d:3.6,int:2,img:'c10',cap:'Mission Control, Earth.',draw:t=>{g.fillStyle=lg(g,0,0,0,H,['#1c2458','#0c0f2a']);g.fillRect(0,0,W,H);hayesP(200,330,7);},bub:[{s:'Great flying, Captain! Pale Blue is in lunar orbit.',x:330,y:80,w:250,tx:300,ty:170,at:.4}]},
