@@ -1998,8 +1998,8 @@ function drawMDone(){starfield(T*20);const r=40+stateT*14;moonBall(W/2+150,180,M
  txt('SCORE '+score+'  ·  KILLS '+stats.kills,W/2,284,11,'#45d6ff');txt('MISSION '+(mDone+1)+' UNLOCKED',W/2,304,11,'#5fe36a');if((T*2|0)%2)txt('TAP TO CONTINUE',W/2,330,12,'#ffffff');
  if((stateT>1.2&&(tapped()||pressedA))||(AUTO&&stateT>2)){pressedA=false;startMission(mDone+1);}}
 // ---------- LANDING ----------
-// One landing system for every destination. Pale Blue is always the official sprite (assets/sprites/paleblue-hd.png,
-// from assets/ref/pale-blue-ship-cut.png): it flies in nose-first from the left, rear thrusters at the back pointing backward.
+// One landing system for every destination. Pale Blue is the in-game ship (shipSprOld, captain in the cockpit, as since build 22):
+// it flies in nose-first from the left, rear thrusters at the back pointing backward.
 let LANDNEXT=null;function landTo(fn){LANDNEXT=fn;go('landing');}
 const LANDS={2:{k:'moon',n:'LANDING: THE MOON',end:'BOOTS ON THE MOON'},4:{k:'mars',n:'LANDING: MARS',end:'BOOTS ON MARS',dn:'DUST STORM AHEAD'},
  5:{k:'phobos',n:'LANDING: PHOBOS',end:'NEXT STOP: THE MINE RAILS',dn:'SMALL MOON. SOFT LANDING.'},7:{k:'vesta',n:'LANDING: VESTA',end:'THE PEAK IS WAY UP THERE!',dn:'LANDING LEGS DEPLOYED'},
@@ -2290,7 +2290,7 @@ const COMETWIN=[
 // ================= MISSION 6: ASTEROID BELT SPEED RUN (Phobos ▶ Vesta) =================
 const STG6=[{n:'THE BELT EDGE',a:0,b:6200,boss:'tosser',jump:7600,iv:950},{n:'ROCK RAPIDS',a:7600,b:13600,boss:'smasher',jump:15000,iv:900},{n:'VESTA APPROACH',a:15000,b:21000,boss:'kreel2',jump:22400,iv:860}],
  GEMSP6=[[0,2700,24],[1,5300,-24],[2,9600,26],[3,12400,-26],[4,17600,24]];
-loadImg('spr_paleblue','assets/sprites/paleblue-hd.png');['tosser','tosser-throw','smasher','smasher-smash','muncher','muncher-open','kreelship','kreelship-open'].forEach(k=>loadImg('spr_'+k,'assets/sprites/'+k+'.png'));
+['tosser','tosser-throw','smasher','smasher-smash','muncher','muncher-open','kreelship','kreelship-open'].forEach(k=>loadImg('spr_'+k,'assets/sprites/'+k+'.png'));
 function sprI(k,x,y,h,fl,flip){const im=IMG['spr_'+k];if(!im)return false;const w=im.width*h/im.height;g.save();g.translate(x,y);if(flip)g.scale(-1,1);g.drawImage(im,-w/2,-h/2,w,h);if(fl){g.globalCompositeOperation='lighter';g.globalAlpha=.45;g.drawImage(im,-w/2,-h/2,w,h);}g.restore();return true;}
 function vestaBall(x,y,r){circ(x,y,r+3,OL);g.fillStyle=ballG(g,x,y,r,r,'#a8b0c4');g.beginPath();g.arc(x,y,r,0,TAU);g.fill();g.save();g.beginPath();g.arc(x,y,r,0,TAU);g.clip();
  g.fillStyle='rgba(60,64,90,.35)';g.beginPath();g.ellipse(x+r*.1,y+r*.45,r*.62,r*.36,0,0,TAU);g.fill();g.fillStyle='rgba(230,235,250,.5)';g.beginPath();g.moveTo(x-r*.08,y+r*.42);g.lineTo(x+r*.08,y+r*.12);g.lineTo(x+r*.24,y+r*.42);g.fill();
