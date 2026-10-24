@@ -1138,8 +1138,8 @@ function pilotBust(x,ci){const c=CAPS[ci],sk=c.skin,hr=c.hair,ARM='#8fb8e8';x.sa
  if(c.style==='glasses'){x.strokeStyle='#2a1a10';x.lineWidth=.55;x.beginPath();x.arc(19,-9.2,1.7,0,TAU);x.stroke();}
  x.strokeStyle='#7a3a2a';x.lineWidth=.55;x.beginPath();x.moveTo(18.8,-6.8);x.quadraticCurveTo(19.8,-6.2,20.6,-7);x.stroke();
  x.restore();}
-function shipSpr(){const im=IMG.spr_paleblue;if(im&&im.width)return{c:im,w:104,h:70,ax:54,ay:36};return shipSprOld();}
-function shipSprOld(){const ci=cap;return pre('ship2_'+ci,104,72,54,36,x=>{const WB='#a9cdf2',W1='#f2f6fb';
+function shipSpr(empty){const im=IMG.spr_paleblue;if(im&&im.width)return{c:im,w:104,h:70,ax:54,ay:36};return shipSprOld(empty);}
+function shipSprOld(empty){const ci=cap;return pre('ship2_'+ci+(empty?'e':''),104,72,54,36,x=>{const WB='#a9cdf2',W1='#f2f6fb';
  // wings (behind)
  x.beginPath();x.moveTo(-4,-9);x.quadraticCurveTo(-22,-20,-40,-26);x.quadraticCurveTo(-34,-17,-18,-4);x.closePath();fo(x,lg(x,0,-26,0,-4,['#e8f2ff',WB,'#6a98d0']),1.4);
  x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=1.4;x.beginPath();x.moveTo(-6,-10);x.quadraticCurveTo(-22,-20,-38,-25);x.stroke();
@@ -1160,7 +1160,7 @@ function shipSprOld(){const ci=cap;return pre('ship2_'+ci,104,72,54,36,x=>{const
  x.beginPath();x.moveTo(20,2);x.quadraticCurveTo(34,0,32,10);x.quadraticCurveTo(28,20,16,18);x.quadraticCurveTo(14,10,20,2);fo(x,lg(x,0,0,0,20,['#ffffff','#e4ecf6','#a8b8d0']),1.3);RR(x,24,9,4,2,1);x.fillStyle='#3a4660';x.fill();
  // bubble cockpit + blue seat
  E(x,14,-7,15,13);x.fillStyle=lg(x,0,-20,0,6,['rgba(170,230,255,.75)','rgba(60,150,220,.6)']);x.fill();
- RR(x,6,-14,9,15,3);fo(x,lg(x,0,-14,0,1,['#5a9aff','#2a5ab8']),1);RR(x,8,-2,12,4,2);fo(x,'#2a5ab8',.9);pilotBust(x,ci);E(x,14,-7,15,13);x.fillStyle='rgba(170,230,255,.16)';x.fill();
+ RR(x,6,-14,9,15,3);fo(x,lg(x,0,-14,0,1,['#5a9aff','#2a5ab8']),1);RR(x,8,-2,12,4,2);fo(x,'#2a5ab8',.9);if(!empty)pilotBust(x,ci);E(x,14,-7,15,13);x.fillStyle='rgba(170,230,255,.16)';x.fill();
  E(x,14,-7,15,13);x.strokeStyle=OL;x.lineWidth=1.6;x.stroke();x.strokeStyle=WB;x.lineWidth=2;x.beginPath();x.ellipse(14,-7,15,13,0,Math.PI*.15,Math.PI*.95);x.stroke();
  gloss(x,9,-14,6,2.6,.85);gloss(x,21,-12,1.6,.9,.9);
  // dish antenna on top
@@ -1169,7 +1169,7 @@ function shipSprOld(){const ci=cap;return pre('ship2_'+ci,104,72,54,36,x=>{const
  x.beginPath();x.moveTo(-4,12);x.quadraticCurveTo(-24,24,-42,32);x.quadraticCurveTo(-34,22,-16,8);x.closePath();fo(x,lg(x,0,8,0,32,['#e8f2ff',WB,'#5a88c4']),1.4);
  x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=1.4;x.beginPath();x.moveTo(-6,13);x.quadraticCurveTo(-24,24,-40,31);x.stroke();
  x.strokeStyle='rgba(30,40,70,.45)';x.lineWidth=.6;x.beginPath();x.moveTo(-14,13);x.lineTo(-26,25);x.stroke();});}
-function ship(x,y,t,sc=1,flame=1){const s=shipSpr(),f=(1+Math.sin(t*40)*.3)*flame;g.save();g.translate(x,y);g.rotate(Math.sin(t*2)*.04);g.scale(sc,sc);
+function ship(x,y,t,sc=1,flame=1,empty){const s=shipSpr(empty),f=(1+Math.sin(t*40)*.3)*flame;g.save();g.translate(x,y);g.rotate(Math.sin(t*2)*.04);g.scale(sc,sc);
  const nw=s.c!==undefined&&s.c===IMG.spr_paleblue;for(const[ox,o]of nw?[[-38,-1],[-6,24]]:[[-42,-9],[-42,11]]){dglow(ox-8*f,o,10+7*f,'#3f8cff',.95);g.fillStyle='rgba(200,235,255,.95)';g.beginPath();g.ellipse(ox+2-4*f,o,4+5*f,2.6,0,0,TAU);g.fill();}
  g.drawImage(s.c,-s.ax,-s.ay,s.w,s.h);if(!nw){const bl=(t*4|0)%2;g.fillStyle=bl?'#ffc53d':'#ff4f7b';g.beginPath();g.arc(-10,-27,1.6,0,TAU);g.fill();if(bl)dglow(-10,-27,6,'#ffc53d',.7);}g.restore();}
 
@@ -1650,7 +1650,7 @@ function drawMoon(){if(mission===9&&SK)return drawSky();const m=M,cx=m.cam,cy=m.
  for(const q of m.gaps){const x=q[0]-cx,w=q[1]-q[0];if(x>W||x+w<0)continue;g.fillStyle=lg(g,0,GROUND-4,0,GROUND+70,['#1a1d38','#05060f']);g.fillRect(x,GROUND-2,w,80);g.fillStyle='#454a6a';g.fillRect(x-3,GROUND-2,4,70);g.fillRect(x+w-1,GROUND-2,4,70);dglow(x+w/2,GROUND+40,30,'#7a3aff',.25);}
  for(const c of m.craters){const x=c[0]-cx;if(m.gaps.some(q=>c[0]+c[1]>q[0]&&c[0]-c[1]<q[1]))continue;if(x>-120&&x<W+120)dsp(craterSpr(c[1]|0),x,GROUND+14);}
  if(m.boss)dsp(craterSpr(68),m.arena+330-cx,GROUND+12);
- const fx=420-cx;if(!m.mars&&fx>-60&&fx<W)dsp(flagSpr(),fx,GROUND);if(m.mars){const sx2=140-cx;if(sx2>-150&&sx2<W+150){g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(sx2,GROUND+2,70,7,0,0,TAU);g.fill();landerShip(sx2,GROUND-12*1.4-28,1,1,1.4,0,GROUND);}}
+ const fx=420-cx;if(!m.mars&&fx>-60&&fx<W)dsp(flagSpr(),fx,GROUND);if(m.mars){const sx2=140-cx;if(sx2>-150&&sx2<W+150){g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(sx2,GROUND+2,70,7,0,0,TAU);g.fill();landerShip(sx2,GROUND-12*1.4-28,1,1,1.4,0,GROUND,1);}}
  for(const p of m.movers){const x=p.x-cx;if(x>W||x+p.w<0)continue;dsp(platSpr(p.w),x,p.y);dglow(x+p.w/2,p.y+12,14,'#45d6ff',.6);}
  const ax=m.arena-cx;if(ax>-30&&ax<W+30){g.fillStyle=OL;g.beginPath();g.roundRect(ax-10,GROUND-144,20,146,6);g.fill();g.fillStyle=lg(g,ax-8,0,ax+8,0,['#7a80a8','#454a66','#2a2f48']);g.beginPath();g.roundRect(ax-8,GROUND-142,16,142,5);g.fill();
   for(let j=0;j<7;j++){const on=m.lock?((T*6+j|0)%2):1,c2=m.lock?(on?'#ff4f7b':'#801030'):'#45d6ff';circ(ax,GROUND-130+j*19,3.2,c2);if(on)dglow(ax,GROUND-130+j*19,8,c2,.6);}if(m.lock)dglow(ax,GROUND-70,44,'#ff4f7b',.3);}
@@ -1671,10 +1671,10 @@ function drawMoon(){if(mission===9&&SK)return drawSky();const m=M,cx=m.cam,cy=m.
  hud(m.hp,m.maxhp);if(m.tip){panel(116,26,408,58,'#ffc53d');hayesP(140,76,.95);wrap('HAYES: '+m.tip.t,342,42,350,11.5,'#ffffff',16);}if(!m.lock&&!m.tip)txt('M'+m.lv+' · '+(m.lv===4?MSECT4:MSECT).reduce((a,c)=>m.px>=c[0]?c[1]:a,'')+'   ◆ GEMS '+gemN(m.lv)+'/5',W/2,16,10,'#45d6ff');
  m.msgs.slice(-3).forEach((s,i)=>capBox(s.t,W/2,100+i*25));
  if(m.cut)moonCut(m);else controls(false);}
-function landerShip(x,y,legK,rampK,sc,flame,gy){const leg=4+24*legK;
+function landerShip(x,y,legK,rampK,sc,flame,gy,empty){const leg=4+24*legK;
  for(const d of[-1,1]){const hx=x+d*24*sc,hy=y+12*sc,fx=x+d*(28*sc+8*legK),fy=hy+leg;g.lineCap='round';g.strokeStyle=OL;g.lineWidth=7;g.beginPath();g.moveTo(hx,hy);g.lineTo(fx,fy);g.stroke();g.strokeStyle='#9aa4c4';g.lineWidth=4;g.stroke();
   g.fillStyle=OL;g.beginPath();g.roundRect(fx-10,fy-3,20,7,3);g.fill();g.fillStyle='#ee8a2a';g.beginPath();g.roundRect(fx-8.5,fy-2,17,5,2);g.fill();}
- ship(x,y,0,sc,flame);
+ ship(x,y,0,sc,flame,empty);
  if(rampK>0){const hx=x+8*sc,hy=y+12*sc,len=Math.max(30,Math.hypot(46,gy-hy)),af=Math.asin(clamp((gy-hy)/len,-1,1)),a=-Math.PI/2+(af+Math.PI/2)*rampK;
   g.fillStyle=OL;g.fillRect(hx-9,hy-20,18,21);g.fillStyle='#ffe9a0';g.fillRect(hx-7,hy-18,14,18);dglow(hx,hy-8,22,'#ffc53d',.6*rampK);
   const ex=hx+Math.cos(a)*len,ey=hy+Math.sin(a)*len;g.lineCap='round';g.strokeStyle=OL;g.lineWidth=9;g.beginPath();g.moveTo(hx,hy);g.lineTo(ex,ey);g.stroke();g.strokeStyle='#b8bed8';g.lineWidth=6;g.stroke();
@@ -1730,7 +1730,7 @@ function baseBack(cx){const G0=GROUND,m=M;if(m.mars)marsBack(cx);
   if(m.mars)caveArt(cx);else for(const lx of m.lamps){const X=lx-cx;if(X<-30||X>W+30)continue;g.fillStyle=OL;g.fillRect(X-3,G0-110,6,110);g.fillStyle='#5a6088';g.fillRect(X-1.5,G0-108,3,108);circ(X,G0-114,6,'#fff2c0',OL);dglow(X,G0-114,30,'#ffd27a',.8);}}
  for(const s of INTS)if(m.mars){if(s[0]<7000)colonyInt(s[0],s[1],s[2],s[3],cx);}else interior(s[0],s[1],s[2],s[3],cx);if(m.mars)marsGardens(cx);
  const k=5120-cx;if(k>-50&&k<W+50)txt(m.mars?'COLONY LOOKOUT':'KOSMOS CACHE',k+70,-440,9,'#b9f6ff');
- const shx=140-cx;if(shx>-150&&shx<W+150&&!m.mars){g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(shx,G0+2,70,7,0,0,TAU);g.fill();landerShip(shx,G0-12*1.4-28,1,1,1.4,0,G0);}
+ const shx=140-cx;if(shx>-150&&shx<W+150&&!m.mars){g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(shx,G0+2,70,7,0,0,TAU);g.fill();landerShip(shx,G0-12*1.4-28,1,1,1.4,0,G0,1);}
  for(const c of m.cps){const X=c.x-cx;if(c.x===140||X<-20||X>W+20)continue;g.fillStyle=OL;g.fillRect(X-4,G0-60,8,60);g.fillStyle='#8a90b0';g.fillRect(X-2,G0-58,4,58);const col=c.on?'#5fe36a':'#ff4f7b';circ(X,G0-64,7,col,OL);dglow(X,G0-64,c.on?26:14,col,.7);}}
 function darkness(cx,cy){const m=M,[a,b]=m.dark,k=clamp(Math.min(m.px-a,b-m.px)/160+.2,0,1);if(m.px<a-200||m.px>b+200||k<=0)return;
  if(!window._dk){window._dk=mkc(W,H);}const c=window._dk,x=c.getContext('2d');x.globalCompositeOperation='source-over';x.clearRect(0,0,W,H);x.fillStyle=`rgba(3,3,12,${.9*k})`;x.fillRect(0,0,W,H);x.globalCompositeOperation='destination-out';
@@ -1785,7 +1785,7 @@ function capCard(i,x,y,w,h){const im=IMG[CAPKEY[i]];g.fillStyle=OL;g.fillRect(x-
 // ===================== TORN STAR MAP + JUPITER COMICS =====================
 const MAPROW={1:['@','The path starts at the Moon!','No crystal under ANY rock. I checked 400 rocks.'],2:['@','Next piece points to Mars.','It must be in a fuel tank! ...Nope. Just fuel.'],3:['@','Mars! Getting warmer.','Malakar\'s digging on Mars. It\'s buried. Has to be.'],
  4:['@','Someone is calling for help on the map!','Digging done. Found... a sock.'],5:['COMET','BEEP. Smells like adventure. And asteroids.','It\'s inside a space potato. Asteroids look like potatoes.'],6:['COMET','BEEP. Path goes UP.','Top of a mountain! Crystals LOVE views.'],
- 7:['@','Jupiter... but the end is still missing.','Fine. It\'s in the junkyard. Treasure is ALWAYS in the junk.'],8:['COMET','BEEP. Someone drew a hat?','I\'ll check every piece of junk... again.'],9:['@','The path goes on. Next stop: Saturn!','VOYAGER?! I said Voyager! ...Did I say Voyager?'],10:['COMET','BEEP. The path keeps going. Farther out!','It\'s frozen inside a ring rock! ...Nope. Just a snowball.']};
+ 7:['@','Jupiter... but the end is still missing.','Fine. It\'s in the junkyard. Treasure is ALWAYS in the junk.'],8:['COMET','BEEP. Someone drew a hat?','I\'ll check every piece of junk... again.'],9:['@','The path goes on. Next stop: Saturn!','VOYAGER?! I said Voyager! ...Did I say Voyager?'],10:['COMET','BEEP. The path keeps going. Farther out!','It\'s frozen inside an ice geyser! ...Nope. Just a snowball.']};
 const MAPN=14,MAPPT=Array.from({length:MAPN},(_,i)=>[66+i*39,i%2?162:226-((i/2|0)%2)*14]);
 function mapIcon(i,x,y){g.save();g.translate(x,y);g.strokeStyle='#5a3a1a';g.lineWidth=2;g.fillStyle='rgba(90,58,26,.25)';
  if(i===0){g.beginPath();g.arc(0,0,13,0,TAU);g.fill();g.stroke();g.beginPath();g.arc(-4,-3,3,0,TAU);g.arc(5,4,2,0,TAU);g.stroke();}
@@ -2010,7 +2010,7 @@ function drawMDone(){starfield(T*20);const r=40+stateT*14;moonBall(W/2+150,180,M
 let LANDNEXT=null;function landTo(fn){LANDNEXT=fn;go('landing');}
 const LANDS={2:{k:'moon',n:'LANDING: THE MOON',end:'BOOTS ON THE MOON'},4:{k:'mars',n:'LANDING: MARS',end:'BOOTS ON MARS',dn:'DUST STORM AHEAD'},
  5:{k:'phobos',n:'LANDING: PHOBOS',end:'NEXT STOP: THE MINE RAILS',dn:'SMALL MOON. SOFT LANDING.'},7:{k:'vesta',n:'LANDING: VESTA',end:'THE PEAK IS WAY UP THERE!',dn:'LANDING LEGS DEPLOYED'},
- 9:{k:'jupiter',n:'ARRIVAL: JUPITER',end:'STEPPING ONTO THE CLOUDS',dn:'HOVER MODE ON',hover:1},10:{k:'saturn',n:'LANDING: SATURN\'S RINGS',end:'BRRR! SLIPPERY UP HERE!',dn:'TOUCHDOWN ON A GIANT ICE ROCK'}};
+ 9:{k:'jupiter',n:'ARRIVAL: JUPITER',end:'STEPPING ONTO THE CLOUDS',dn:'HOVER MODE ON',hover:1},10:{k:'saturn',n:'LANDING: ENCELADUS',end:'BRRR! THIS MOON SNEEZES SNOW!',dn:'ICY MOON. HOLD ON TIGHT!'}};
 function lnoise(x,a){const p=u=>1-2*Math.abs(Math.sin(u));return p(x*.009+a)*.6+p(x*.023+a*2.3)*.3+Math.sin(x*.09+a*4.1)*.1;}
 function landRidge(y0,amp,a,fill,step=8){g.fillStyle=OL;g.beginPath();g.moveTo(0,H);for(let x=0;x<=W;x+=step)g.lineTo(x,y0-3-amp*(.6+.4*lnoise(x,a)));g.lineTo(W,H);g.fill();g.fillStyle=fill;g.beginPath();g.moveTo(0,H);for(let x=0;x<=W;x+=step)g.lineTo(x,y0-amp*(.6+.4*lnoise(x,a)));g.lineTo(W,H);g.fill();}
 function landRock(x,y,w,h,c1,c2){g.fillStyle=OL;g.beginPath();g.ellipse(x,y,w+2,h+2,0,Math.PI,TAU);g.fill();g.fillStyle=lg(g,0,y-h,0,y,[c1,c2]);g.beginPath();g.ellipse(x,y,w,h,0,Math.PI,TAU);g.fill();g.fillStyle='rgba(255,255,255,.18)';g.beginPath();g.ellipse(x-w*.35,y-h*.6,w*.25,h*.2,-.3,0,TAU);g.fill();}
@@ -2035,11 +2035,24 @@ function landBg(k,t,gy){
   g.strokeStyle='rgba(40,30,30,.5)';g.lineWidth=2;for(const[a,b,c,d]of[[px-20,pt+70,px-50,pt+130],[px+10,pt+90,px+40,pt+170],[px-60,pt+150,px-100,pt+200]]){g.beginPath();g.moveTo(a,b);g.lineTo(c,d);g.stroke();}
   dglow(px-6,pt+6,20,'#9af0ff',.5+.3*Math.sin(T*3));landRidge(gy-4,20,7,'#8a7a66',8);g.fillStyle=lg(g,0,gy,0,H,['#9a8a76','#5a4c40']);g.fillRect(0,gy,W,H-gy);g.fillStyle=OL;g.fillRect(0,gy-1,W,3);
   for(const[x,y,w,h]of[[70,gy+34,24,12],[180,gy+62,14,8],[560,gy+40,22,12]])landRock(x,y,w,h,'#b0a08a','#5a4c40');return;}
- if(k==='saturn'){starfield(0);{const im=IMG.bg_satfar;if(im){g.globalAlpha=.8;g.drawImage(im,0,0,W,H*1.05);g.globalAlpha=1;}}satBall(420,96,74);
-  for(let i=0;i<14;i++){const x=((i*83-t*26)%(W+60)+W+60)%(W+60)-30,y=150+(i*29)%90;g.save();g.translate(x,y);g.rotate(i+t*.4);iceBlock(5+(i%4)*3,i*7,['#eafcff','#94daf6','#3f8ac8'],false,false);g.restore();}
-  landRidge(gy-10,26,3,'#9adcf2',8);g.fillStyle=lg(g,0,gy,0,H,['#dff6ff','#8ccbec','#4f8ac0']);g.fillRect(0,gy,W,H-gy);g.fillStyle=OL;g.fillRect(0,gy-1,W,3);
-  g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=2;for(const[a,b,c,d]of[[40,gy+22,120,gy+30],[300,gy+40,380,gy+34],[480,gy+18,600,gy+28]]){g.beginPath();g.moveTo(a,b);g.lineTo(c,d);g.stroke();}
-  for(const[x,y,w]of[[80,gy+40,18],[540,gy+50,22],[220,gy+66,12]]){g.save();g.translate(x,y);iceBlock(w,x|0,['#f0fdff','#9adcf6','#2f6eb0'],false,false);g.restore();}return;}
+ if(k==='saturn'){// Enceladus: a bright icy moon, cracked ground, little ice geysers, big ringed Saturn in the sky
+  starfield(0);{const im=IMG.bg_satfar;if(im){g.globalAlpha=.55;g.drawImage(im,0,0,W,H*1.05);g.globalAlpha=1;}}satBall(486,128,76);
+  // far icy horizon + snowy ridge
+  landRidge(gy-34,30,5,'#bfe6f6',10);landRidge(gy-8,22,2,'#e4f6ff',8);
+  // geyser plumes (drawn behind the ground line, rising from cracks)
+  const gey=(x0,h,ph)=>{for(let i=0;i<16;i++){const u=((t*.55+i/16+ph)%1),yy=gy-6-u*h,xx=x0+Math.sin(u*5+i)*6*u+u*u*18,r=4+u*16;g.fillStyle=`rgba(240,252,255,${.62*(1-u)})`;g.beginPath();g.arc(xx,yy,r,0,TAU);g.fill();}
+   {const jh=h*.55,gr=lg(g,0,gy-6-jh,0,gy-6,['rgba(255,255,255,0)','rgba(255,255,255,.95)']);g.fillStyle=gr;g.beginPath();g.moveTo(x0-3,gy-4);g.lineTo(x0-7,gy-6-jh);g.lineTo(x0+7,gy-6-jh);g.lineTo(x0+3,gy-4);g.fill();}
+   for(let i=0;i<6;i++){const u=((t*1.1+i/6+ph)%1);circ(x0+Math.sin(i*2.3)*10*u,gy-10-u*h*.8,1.6,`rgba(255,255,255,${1-u})`);}dglow(x0,gy-6,26,'#bff4ff',.45);};
+  gey(86,150,0);gey(574,118,.37);gey(612,70,.71);
+  g.fillStyle=lg(g,0,gy,0,H,['#f6fdff','#cfeefc','#8ccbec']);g.fillRect(0,gy,W,H-gy);g.fillStyle=OL;g.fillRect(0,gy-1,W,3);
+  // blue cracks in the ice
+  const crack=pts=>{g.lineCap='round';g.lineJoin='round';g.strokeStyle='#1f4f86';g.lineWidth=4;g.beginPath();pts.forEach(([a,b],i)=>i?g.lineTo(a,b):g.moveTo(a,b));g.stroke();g.strokeStyle='#5fc8f0';g.lineWidth=2;g.stroke();};
+  crack([[60,gy+2],[78,gy+18],[70,gy+34],[96,gy+52],[88,gy+76]]);crack([[150,gy+58],[190,gy+50],[214,gy+64],[262,gy+60]]);
+  crack([[560,gy+2],[548,gy+22],[566,gy+40],[552,gy+62],[574,gy+80]]);crack([[420,gy+30],[456,gy+42],[500,gy+36],[520,gy+48]]);crack([[330,gy+70],[360,gy+64],[392,gy+74]]);
+  g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=2;for(const[a,b2,c,d]of[[20,gy+14,50,gy+12],[300,gy+22,350,gy+20],[460,gy+14,500,gy+12]]){g.beginPath();g.moveTo(a,b2);g.lineTo(c,d);g.stroke();}
+  // little ice spires and blocks
+  for(const[x,h,w]of[[30,46,14],[618,38,12],[140,22,9]]){g.fillStyle=OL;g.beginPath();g.moveTo(x-w-2,gy+2);g.lineTo(x,gy-h-3);g.lineTo(x+w+2,gy+2);g.fill();g.fillStyle=lg(g,x-w,0,x+w,0,['#ffffff','#a8e2f8','#4f9ad0']);g.beginPath();g.moveTo(x-w,gy+1);g.lineTo(x,gy-h);g.lineTo(x+w,gy+1);g.fill();}
+  for(const[x,y,w]of[[500,gy+56,16],[230,gy+72,11]]){g.save();g.translate(x,y);iceBlock(w,x|0,['#f0fdff','#9adcf6','#2f6eb0'],false,false);g.restore();}return;}
  if(k==='jupiter'){const im=skBands(),ox=(t*14)%1280;g.drawImage(im,-ox,0);g.drawImage(im,1280-ox,0);g.save();g.translate(470-t*4,110);g.drawImage(skStorm(),-160,-85);g.restore();
   skPuffy(-20,150,240,40,'rgba(255,240,225,.7)','rgba(90,40,40,.35)');skPuffy(430,190,260,44,'rgba(255,236,220,.75)','rgba(90,40,40,.35)');
   skPuffy(90,gy+30,460,70,'#fffaf2');skPuffy(-60,H+10,300,60,'#f4e6d8');skPuffy(420,H+16,320,60,'#f4e6d8');return;}}
@@ -2050,7 +2063,7 @@ function drawLanding(){const L=LANDS[mission]||LANDS[2],K=L.k,t=stateT,gy=280,sc
  const alt=gy-(y+12*sc+28*legK);if(K!=='jupiter'){g.fillStyle=`rgba(0,0,0,${clamp(.45-alt/600,0,.45)})`;g.beginPath();g.ellipse(sx,gy+2,Math.max(30,80-alt*.1),7,0,0,TAU);g.fill();}
  if(k<1&&alt<90&&!hv&&Math.random()<.6)addFx(sx+rnd(-60,60),gy,'dust',1.2);
  if(t>=4.5&&!window._td){window._td=1;if(!hv){SHAKE=.35;sfx('boom');sfx('land');for(let i=0;i<16;i++)addFx(sx+rnd(-90,90),gy,'dust',rnd(1.4,2.4));}}if(t<4.5)window._td=0;
- const fl=k<1?.5+1.1*(1-k):hv?.35:0;const r=landerShip(sx,y,legK,rampK,sc,fl,gy);drawFx(0);
+ const fl=k<1?.5+1.1*(1-k):hv?.35:0;const r=landerShip(sx,y,legK,rampK,sc,fl,gy,t>7.1);drawFx(0);
  if(r&&t>7.1){const u=clamp((t-7.2)/2.2,0,1),wk=clamp((t-9.4)/1.4,0,1);let cxp,cyp;if(u<1){cxp=r.hx+(r.ex-r.hx)*u;cyp=r.hy+(r.ey-r.hy)*u;}else{cxp=r.ex+wk*70;cyp=gy-(K==='phobos'?Math.abs(Math.sin(wk*Math.PI*2))*16:0);}
   captain(cxp,cyp,CAPS[cap],{face:1,run:(u<1||wk<1)?T*7:0,t:T});if(u>=1&&wk<.1&&!window._st){window._st=1;addFx(cxp,gy,'dust',1);}}else window._st=0;
  txt(L.n,W/2,24,16,'#ffc53d');
@@ -3477,7 +3490,7 @@ window.GR={m10w:p=>M10WAVE(p,null,t=>sp.msgs.push({t,l:2})),spawnB:t=>spawnBoss(
 const STORY_SHORT=true;
 const STORY_FULL={OPENING:[...OPENING],COMIC:[...COMIC],MOONWIN:[...MOONWIN],MARSGO:[...MARSGO],MARSLAND:[...MARSLAND],MARSWIN:[...MARSWIN],PHOBOSLAND:[...PHOBOSLAND],PRISONARR:[...PRISONARR],BELTGO:[...BELTGO],JYGO:[...JYGO],JUPGO:[...JUPGO],JUPWIN:[...JUPWIN]};
 // keep-searching line shown on the star map after each mission (Kreel's wrong guess from MAPROW stays)
-const KEEPSEARCH={1:'We made it to the Moon! No crystal yet. Keep searching!',2:'No crystal here. Just a lot of rocks. Keep searching!',3:'No crystal at the fuel stations. Next stop: Mars!',4:'Not on Mars either. The map points farther out!',5:'No crystal on Phobos... but we found Comet! Keep searching!',6:'Zero crystals. A zillion rocks. Keep searching!',7:'Still no crystal... but the map is getting brighter!',8:'Nothing in the junkyard but junk. On to Jupiter!',10:'No crystal at Saturn. Just a LOT of ice. Keep searching!'};
+const KEEPSEARCH={1:'We made it to the Moon! No crystal yet. Keep searching!',2:'No crystal here. Just a lot of rocks. Keep searching!',3:'No crystal at the fuel stations. Next stop: Mars!',4:'Not on Mars either. The map points farther out!',5:'No crystal on Phobos... but we found Comet! Keep searching!',6:'Zero crystals. A zillion rocks. Keep searching!',7:'Still no crystal... but the map is getting brighter!',8:'Nothing in the junkyard but junk. On to Jupiter!',10:'No crystal on Enceladus. Just a LOT of ice. Keep searching!'};
 // 4 and 5 used to squeeze the coded-signal and Comet intros into one map line; those beats are now real panels again (see STORY_ONE)
 const POSTX={};
 function postBeat(n){if(n===9)return {img:'c74',d:6,int:3,sting:1,cap:'The Cloud Wizard knows where the Heart Crystal is!',bub:[{s:'Dr. Vega hid it behind the Golden Record. On Voyager!',who:'CLOUD WIZARD',x:40,y:230,w:250,tx:200,ty:180,at:.5},{s:'VOYAGER?! I said Voyager! ...Did I say Voyager?',who:'ACE KREEL',x:40,y:230,w:250,tx:200,ty:180,at:2.2,radio:1}],fx:{s:'SHIMMER!',x:470,y:60,sz:24,at:.3}};
